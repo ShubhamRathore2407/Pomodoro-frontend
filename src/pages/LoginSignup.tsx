@@ -30,34 +30,36 @@ const LoginSignup = () => {
   };
   const handleSubmit = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (currentPath === '/login') {
-      try {
-        const response = await axios.post('/auth/login', {
-          email,
-          password,
-        });
-        localStorage.setItem('access_token', response.data.accessToken);
-        // document.cookie = `refresh_token=${response.data.refreshToken}; HttpOnly; Secure; SameSite=Strict`;
-        //@ts-ignore
-        dispatch(fetchUserData());
-        navigate('/');
-      } catch (error) {
-        console.log(error);
-      }
+    if (password.length < 8) {
+      alert('Min. password length is 8');
     } else {
-      try {
-        const response = await axios.post('/auth/signup', {
-          username,
-          email,
-          password,
-        });
-        localStorage.setItem('access_token', response.data.accessToken);
-        // document.cookie = `refresh_token=${response.data.refreshToken}; HttpOnly; Secure; SameSite=Strict`;
-        //@ts-ignore
-        dispatch(fetchUserData());
-        navigate('/');
-      } catch (error) {
-        console.log(error);
+      if (currentPath === '/login') {
+        try {
+          const response = await axios.post('/auth/login', {
+            email,
+            password,
+          });
+          localStorage.setItem('access_token', response.data.accessToken);
+          //@ts-ignore
+          dispatch(fetchUserData());
+          navigate('/');
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        try {
+          const response = await axios.post('/auth/signup', {
+            username,
+            email,
+            password,
+          });
+          localStorage.setItem('access_token', response.data.accessToken);
+          //@ts-ignore
+          constdispatch(fetchUserData());
+          navigate('/');
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   };
@@ -88,7 +90,6 @@ const LoginSignup = () => {
           password,
         });
         localStorage.setItem('access_token', response.data.accessToken);
-        // document.cookie = `refresh_token=${response.data.refreshToken}; HttpOnly; Secure; SameSite=None`;
         //@ts-ignore
         dispatch(fetchUserData());
         navigate('/');

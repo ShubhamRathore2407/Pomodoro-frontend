@@ -21,7 +21,6 @@ const Task = React.memo(
     status,
     isActive,
     notes,
-    // handleReset,
     setTimerPause,
     setEditingTaskId,
     setAddingTask,
@@ -31,7 +30,6 @@ const Task = React.memo(
     taskId: any;
     isActive: boolean;
     notes: string | '';
-    // handleReset: () => void;
     setTimerPause: (timerPause: boolean) => void;
     setEditingTaskId: (editingTaskId: number | null) => void;
     setAddingTask: (addingTask: boolean) => void;

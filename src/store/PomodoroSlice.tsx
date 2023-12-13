@@ -56,7 +56,14 @@ const pomodoroSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(createPomodoroSession.fulfilled, (state, action) => {
-      state.pomodoroId = action.payload.pomodoro;
+      if (action.payload != null && action.payload !== 'token expired') {
+        state.pomodoroId = action.payload.pomodoro;
+      }
+    });
+    builder.addCase(endPomodoro.fulfilled, (state, action) => {
+      if (action.payload != null && action.payload !== 'token expired') {
+        state.pomodoroId = null;
+      }
     });
   },
 });

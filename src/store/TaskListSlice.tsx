@@ -203,6 +203,12 @@ const taskListSlice = createSlice({
         updateTask?.pomodoros.push(pomodoroId);
       }
     },
+    removetaskId(state) {
+      console.log('here');
+
+      state.activeTaskIndex = null;
+      state.activeIndexStatus = '';
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllTasks.fulfilled, (state, action) => {
@@ -237,18 +243,9 @@ const taskListSlice = createSlice({
     });
     builder.addCase(deleteTask.fulfilled, (state, action) => {
       if (action.payload != null && action.payload !== 'token expired') {
-        const arr1 = [...state.tasks];
-        console.log(arr1);
-
         state.tasks = state.tasks.filter((task) => {
           return task._id !== action.payload;
         });
-        const arr2 = [...state.tasks];
-        console.log(arr2);
-
-        // state.tasks = state.tasks.filter((task) => {
-        //   return task._id !== action.payload;
-        // });
       }
     });
     builder.addCase(updateBreakTime.fulfilled, (state, action: any) => {

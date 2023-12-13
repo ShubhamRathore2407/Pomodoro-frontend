@@ -99,6 +99,7 @@ const Home: React.FC = () => {
               editingTaskId === task?._id ? (
                 <AddTaskInput
                   data-testid="edit-task-component"
+                  setTimerPause={setTimerPause}
                   key={task._id}
                   setAddingTask={setAddingTask}
                   taskId={task._id}
@@ -136,10 +137,11 @@ const Home: React.FC = () => {
           <AddTaskInputComp data-testid="add-task-input-component">
             <AddTaskInput
               setAddingTask={setAddingTask}
+              setEditingTaskId={setEditingTaskId}
+              setTimerPause={setTimerPause}
               taskId={null}
               text=""
               notes=""
-              setEditingTaskId={setEditingTaskId}
             />
           </AddTaskInputComp>
         )}
@@ -235,19 +237,8 @@ export default Home;
 
 /**
  * fixes & possibles :
- * - should not be able to change task while timer is on
- * - delete task during timer is on
- * - switching task while timer is on
- * - completing task without selecting it
+ * - switching task while timer is on ------------------------- pass timerPause in Task comp
  * - add indexed DB for users not logged in
- * - user auth, and refresh tokens
- * - input validations
- *
- * backend ->
- * - min password length
  *
  *
- * start from : - completeTask ( tick 2)
- *
- * store userId in cookies too, when access token expires, the getProfile will send an invalid token in backend and there we can fetch userId from cookies and then generate a new access token if the refresh token isnt expired else we can logout the user by removing userId and access_token cookies
  */

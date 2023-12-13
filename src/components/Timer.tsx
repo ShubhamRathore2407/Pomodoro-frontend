@@ -220,8 +220,6 @@ const Timer = ({
     localStorage.setItem('access_token', reResponse.data.accessToken);
   };
   const handleStartClick = async () => {
-    console.log(breakStarted);
-
     if (activeIndex) {
       //  Request to allow access to notifications
       reqToAllowNotification();

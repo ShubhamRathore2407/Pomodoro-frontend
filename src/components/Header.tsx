@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -7,18 +7,43 @@ import {
   fetchUserData,
   logoutUser,
 } from '../store/UserSlice';
+import axios from 'axios';
 
 const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // var userData = useSelector((state: any) => state.user.userId);
   const [loggedIn, setLoggedIn] = useState<boolean>(
     localStorage.getItem('access_token') !== null
   );
+  const generateAndSetNewTokens = async () => {
+    const reResponse = await axios.post(
+      'http://localhost:5000/api/auth/refreshToken'
+    );
+    localStorage.removeItem('access_token');
+    localStorage.setItem('access_token', reResponse.data.accessToken);
+  };
 
+  //Fetching user details
   useEffect(() => {
-    //@ts-ignore
-    dispatch(fetchUserData());
+    const fetchUserDataFunction = async () => {
+      //@ts-ignore
+      const response = await dispatch(fetchUserData());
+
+      if (response.payload === 'token expired') {
+        try {
+          await generateAndSetNewTokens();
+
+          //@ts-ignore
+          dispatch(fetchUserData());
+        } catch (error: any) {
+          if (error && error.response.status === 403) {
+            localStorage.removeItem('access_token');
+            alert('unauthenticated : Token expired');
+          } else console.log(error);
+        }
+      }
+    };
+    fetchUserDataFunction();
   }, []);
 
   const handleLoginOut = () => {

@@ -23,8 +23,9 @@ export const fetchUserData = createAsyncThunk('user/getProfile', async () => {
   //   localStorage.removeItem('access_token');
   //   localStorage.setItem('access_token', reResponse.data.accessToken);
   // }
-
-  return response.data.userData;
+  return response.data.message === 'token expired'
+    ? 'token expired'
+    : response.data.userData;
 });
 
 export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
