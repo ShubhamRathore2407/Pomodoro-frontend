@@ -11,6 +11,7 @@ export const createPomodoroSession = createAsyncThunk(
   async (obj) => {
     try {
       const response = await axios.post(`${baseURL}/createPomodoro`, obj);
+
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data;

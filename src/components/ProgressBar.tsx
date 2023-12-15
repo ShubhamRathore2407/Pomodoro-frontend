@@ -21,7 +21,9 @@ const ProgressBar = ({ taskList }: { taskList: TaskInterface[] }) => {
   return (
     <ProgressBarWrapper>
       <BarFill $width={fill} data-testid="bar-fill" />
-      <Text>{Math.round(fill)}%</Text>
+      <Text>
+        {Math.round(fill) === 0 ? 'Task Completed : 0' : Math.round(fill)}%
+      </Text>
     </ProgressBarWrapper>
   );
 };

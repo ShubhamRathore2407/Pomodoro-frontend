@@ -25,6 +25,7 @@ export interface TaskInterface {
   pomodoros: mongoose.Types.ObjectId[];
   started_at: number | null;
   completed_at: number | null;
+  deleted?: boolean;
 }
 export interface TimerState {
   minutes: number;

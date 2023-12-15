@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { IntervalSliceActions } from '../store/IntervalSlice';
 import {
   pauseTask,
+  restartTask,
   // restartTask,
   startResumeTask,
   updateBreakTime,
@@ -54,12 +55,12 @@ const Timer = ({
 
   const allIntervals = {
     Pomodoro: {
-      min: 0,
-      sec: 5,
+      min: 25,
+      sec: 0,
     },
     ShortBreak: {
-      min: 0,
-      sec: 3,
+      min: 5,
+      sec: 0,
     },
     LongBreak: {
       min: 15,
@@ -78,6 +79,7 @@ const Timer = ({
 
   // Function to update the countdown timer
   const updateTimer = () => {
+    const currentTime = Date.now();
     setState((prevState: any) => {
       if (prevState.seconds === 0) {
         if (prevState.minutes === 0) {
@@ -86,9 +88,10 @@ const Timer = ({
             selectedInterval.sec === allIntervals.Pomodoro.sec
           ) {
             setTimeout(async () => {
+              const obj = { pomodoroId, taskId: activeIndex, currentTime };
               const response = await dispatch(
                 //@ts-ignore
-                endPomodoro({ pomodoroId, taskId: activeIndex })
+                endPomodoro(obj)
               );
 
               if (response.payload === 'token expired') {
@@ -96,7 +99,7 @@ const Timer = ({
                   await generateAndSetNewTokens();
 
                   //@ts-ignore
-                  dispatch(endPomodoro({ pomodoroId, taskId: activeIndex }));
+                  dispatch(endPomodoro(obj));
                 } catch (error: any) {
                   if (error && error.response.status === 403)
                     alert('unauthenticated : Token expired');
@@ -220,77 +223,134 @@ const Timer = ({
     localStorage.setItem('access_token', reResponse.data.accessToken);
   };
   const handleStartClick = async () => {
-    if (activeIndex) {
+    const currentTime = Date.now();
+    if (
+      selectedInterval.min !== allIntervals.Pomodoro.min &&
+      activeIndex === null
+    ) {
+      //Start
+      if (!timerStart) {
+        setTimerStart(true);
+        setTimerPause(false);
+      }
+      //Pause
+      if (timerStart && !timerPause) {
+        setTimerPause(true);
+      }
+      //Resume
+      if (timerStart && timerPause) {
+        setTimerPause(false);
+      }
+    } else if (activeIndex) {
       //  Request to allow access to notifications
       reqToAllowNotification();
 
       if (activeStatus === 'Completed') {
-        // Restart a completed task - Dispatch (restartTask) action
-        if (!breakStarted) {
-          //@ts-ignore
-          const response = await dispatch(restartTask(obj));
-          if (response.payload === 'token expired') {
-            try {
-              await generateAndSetNewTokens();
+        const res = !timerStart
+          ? confirm('Do you want to restart this task?')
+          : true;
+        if (res) {
+          console.log('Start/Resume a completed Task >> ');
+          //3 cases - 1) Button text = start(timerStart = false && timerPause = true) 2) Button text = Resume(timerStart = true && timerPause = true) 3)Button text = Resume(timerStart = true && timerPause = false)
 
-              //@ts-ignore
-              dispatch(dispatch(restartTask(obj)));
-            } catch (error: any) {
-              if (error && error.response.status === 403)
-                alert('unauthenticated : Token expired');
-              else console.log(error);
-            }
+          //1st CASE - Button text = Start (timerStart = false && timerPause = true) - Dispatch ->
+          if (!timerStart && timerPause) {
+            setTimerStart(true);
+            setTimerPause(false);
+            console.log('Start: restart this task');
           }
-        }
-        console.log('Start/Resume a completed Task >> ');
-        //2 cases - 1) Button text = start(timerStart = false && timerPause = true) 2) Button text = Resume(timerStart = true && timerPause = true)
+          //2nd CASE - Button text = Resume(timerStart = true && timerPause = true)
+          if (timerStart && timerPause) {
+            setTimerPause(false);
+            console.log('Resume: resume this task');
+          }
+          //3rd CASE - Button text = Pause(timerStart = true && timerPause = false)
+          if (timerStart && !timerPause) {
+            setTimerPause(true);
+            if (!breakStarted) {
+              const response = await dispatch(
+                //@ts-ignore
+                pauseTask(activeIndex)
+              );
 
-        //1st CASE - Button text = Start (timerStart = false && timerPause = true) - Dispatch ->
-        if (!timerStart && timerPause) {
-          setTimerStart(true);
-          setTimerPause(false);
-          console.log('Start: restart this task');
-        }
-        //2nd CASE - Button text = Resume(timerStart = true && timerPause = true)
-        if (timerStart && timerPause) {
-          setTimerPause(false);
-          console.log('Resume: resume this task');
-        }
-      } else {
-        //Three cases - 1) new task to start 2) old task to resume 3) Pause the task
+              if (response.payload === 'token expired') {
+                await generateAndSetNewTokens();
+                try {
+                  await generateAndSetNewTokens();
 
-        //1st CASE - new task to start -> Dispatch - (createPomodoroSession) & (startResumeTask) -> condition - timerStart = false
-        if (!timerStart && timerPause) {
+                  //@ts-ignore
+                  dispatch(pauseTask(taskId));
+                } catch (error: any) {
+                  if (error && error.response.status === 403)
+                    alert('unauthenticated : Token expired');
+                  else console.log(error);
+                }
+              }
+            }
+            console.log('Pause : Pause the Task');
+          }
+          // Restart a completed task - Dispatch (restartTask) action
           if (!breakStarted) {
-            const response = await dispatch(
-              //@ts-ignore
-              createPomodoroSession({ taskId: activeIndex, user_id })
-            );
+            const obj = {
+              taskId: activeIndex,
+              currentTime,
+            };
+            //@ts-ignore
+            const response = await dispatch(restartTask(obj));
             if (response.payload === 'token expired') {
               try {
                 await generateAndSetNewTokens();
-                dispatch(
-                  //@ts-ignore
-                  createPomodoroSession({ taskId: activeIndex, user_id })
-                );
+
                 //@ts-ignore
-                startResumeTask({ taskId: activeIndex, pomodoroId });
-                setTimeout(() => {
-                  dispatch(
-                    taskListActions.addTaskIdOnPomodoroStart({
-                      taskId: activeIndex,
-                      pomodoroId,
-                    })
-                  );
-                }, 400);
+                dispatch(dispatch(restartTask(obj)));
               } catch (error: any) {
                 if (error && error.response.status === 403)
                   alert('unauthenticated : Token expired');
                 else console.log(error);
               }
             }
-            //@ts-ignore
-            dispatch(startResumeTask({ taskId: activeIndex, pomodoroId }));
+            dispatch(taskListActions.setInComplete(activeIndex));
+          }
+        }
+      } else {
+        //Three cases - 1) new task to start 2) resume task 3) Pause the task
+
+        //1st CASE - new task to start -> Dispatch - (createPomodoroSession) & (startResumeTask) -> condition - timerStart = false
+        if (!timerStart && timerPause) {
+          if (!breakStarted) {
+            let currPomodoroId: any;
+            const obj = {
+              taskId: activeIndex,
+              user_id,
+              currentTime,
+            };
+            const response = await dispatch(
+              //@ts-ignore
+              createPomodoroSession(obj)
+            );
+            if (response.payload === 'token expired') {
+              try {
+                await generateAndSetNewTokens();
+                dispatch(
+                  //@ts-ignore
+                  createPomodoroSession(obj)
+                );
+              } catch (error: any) {
+                if (error && error.response.status === 403)
+                  alert('unauthenticated : Token expired');
+                else console.log(error);
+              }
+            }
+            currPomodoroId = response.payload.pomodoro;
+
+            dispatch(
+              //@ts-ignore
+              startResumeTask({
+                taskId: activeIndex,
+                pomodoroId: currPomodoroId,
+                currentTime,
+              })
+            );
             dispatch(
               taskListActions.addTaskIdOnPomodoroStart({
                 taskId: activeIndex,
@@ -303,20 +363,23 @@ const Timer = ({
           console.log('Start : start a new task');
         }
 
-        //2nd CASE - old task to resume - Dispatch - (startResumeTask) -> condition - timerStart = true && timerPause = true
+        //2nd CASE - resume task - Dispatch - (startResumeTask) -> condition - timerStart = true && timerPause = true
         if (timerStart && timerPause) {
           if (!breakStarted) {
+            const obj = { taskId: activeIndex, pomodoroId, currentTime };
             const response = await dispatch(
               //@ts-ignore
-              startResumeTask({ taskId: activeIndex, pomodoroId })
+              startResumeTask(obj)
             );
 
             if (response.payload === 'token expired') {
               try {
                 await generateAndSetNewTokens();
 
-                //@ts-ignore
-                dispatch(startResumeTask({ taskId: activeIndex, pomodoroId }));
+                dispatch(
+                  //@ts-ignore
+                  startResumeTask(obj)
+                );
               } catch (error: any) {
                 if (error && error.response.status === 403)
                   alert('unauthenticated : Token expired');
@@ -332,9 +395,13 @@ const Timer = ({
         if (timerStart && !timerPause) {
           setTimerPause(true);
           if (!breakStarted) {
+            const obj = {
+              taskId: activeIndex,
+              currentTime,
+            };
             const response = await dispatch(
               //@ts-ignore
-              pauseTask(activeIndex)
+              pauseTask(obj)
             );
 
             if (response.payload === 'token expired') {
@@ -343,7 +410,7 @@ const Timer = ({
                 await generateAndSetNewTokens();
 
                 //@ts-ignore
-                dispatch(pauseTask(taskId));
+                dispatch(pauseTask(obj));
               } catch (error: any) {
                 if (error && error.response.status === 403)
                   alert('unauthenticated : Token expired');

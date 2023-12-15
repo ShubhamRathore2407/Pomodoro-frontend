@@ -16,8 +16,9 @@ export const fetchAllTasks = createAsyncThunk(
   async (obj: any) => {
     try {
       const response = await axios.post(`${baseURL}/allTasks`, obj);
-
-      return response.data.tasks;
+      return response.data.message === 'token expired'
+        ? 'token expired'
+        : response.data.tasks;
     } catch (error) {
       console.log('fetchAllTasks >> ', error);
     }
@@ -108,10 +109,10 @@ export const restartTask = createAsyncThunk('task/restartTask', async (obj) => {
     console.log(error);
   }
 });
-export const pauseTask = createAsyncThunk('task/pauseTask', async (taskId) => {
+export const pauseTask = createAsyncThunk('task/pauseTask', async (obj) => {
   try {
     const response = await axios.post(`${baseURL}/pauseTask`, {
-      taskId,
+      obj,
     });
     return response.data.message === 'token expired'
       ? 'token expired'
@@ -182,6 +183,7 @@ const taskListSlice = createSlice({
       if (inCompleteTask) {
         inCompleteTask.status = 'Pending';
       }
+      state.activeIndexStatus = 'In Progress';
     },
     setStatus(state, action) {
       if (action.payload !== null) {
@@ -211,8 +213,10 @@ const taskListSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAllTasks.fulfilled, (state, action) => {
-      state.tasks = action.payload;
+    builder.addCase(fetchAllTasks.fulfilled, (state: any, action: any) => {
+      if (action.payload != null && action.payload !== 'token expired') {
+        state.tasks = action.payload;
+      }
     });
     builder.addCase(addNewTask.fulfilled, (state: any, action: any) => {
       if (action.payload != null && action.payload !== 'token expired') {

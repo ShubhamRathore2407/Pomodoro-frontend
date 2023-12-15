@@ -61,6 +61,10 @@ const Home: React.FC = () => {
       seconds: selectedInterval.sec,
     });
   };
+  const filteredTaskList = taskList.filter((task: any) => {
+    return task.deleted !== true;
+  });
+
   return (
     <Section $selectedIntervalColor={selectedIntervalColor}>
       <Wrapper>
@@ -84,18 +88,18 @@ const Home: React.FC = () => {
         </TimerComponent>
 
         {/* Progress Bar */}
-        {taskList && taskList.length > 0 && (
+        {filteredTaskList && filteredTaskList.length > 0 && (
           <ProgressBarComponent data-testid="progress-bar">
-            <ProgressBar taskList={taskList} />
+            <ProgressBar taskList={filteredTaskList} />
           </ProgressBarComponent>
         )}
 
         {/* Task List */}
         <TaskListComponent data-testid="task-list-component">
-          {taskList &&
-            taskList.length > 0 &&
-            Array.isArray(taskList) &&
-            taskList.map((task: TaskInterface) =>
+          {filteredTaskList &&
+            filteredTaskList.length > 0 &&
+            Array.isArray(filteredTaskList) &&
+            filteredTaskList.map((task: TaskInterface) =>
               editingTaskId === task?._id ? (
                 <AddTaskInput
                   data-testid="edit-task-component"
@@ -116,7 +120,8 @@ const Home: React.FC = () => {
                   notes={task.notes}
                   status={task.status}
                   isActive={task.isActive}
-                  // handleReset={handleReset}
+                  timerPause={timerPause}
+                  timerStart={timerStart}
                   setTimerPause={setTimerPause}
                   setEditingTaskId={setEditingTaskId}
                   setAddingTask={setAddingTask}
@@ -150,7 +155,7 @@ const Home: React.FC = () => {
 
       {open && (
         <AnalyticsComponent data-testid="analytics-component">
-          <Analytics taskList={taskList} setOpen={setOpen} />
+          <Analytics setOpen={setOpen} />
         </AnalyticsComponent>
       )}
     </Section>
@@ -239,6 +244,6 @@ export default Home;
  * fixes & possibles :
  * - switching task while timer is on ------------------------- pass timerPause in Task comp
  * - add indexed DB for users not logged in
- *
+ *  - Fix timings of started_at and completed_at
  *
  */

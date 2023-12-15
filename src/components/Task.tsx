@@ -21,6 +21,8 @@ const Task = React.memo(
     status,
     isActive,
     notes,
+    timerPause,
+    timerStart,
     setTimerPause,
     setEditingTaskId,
     setAddingTask,
@@ -30,6 +32,8 @@ const Task = React.memo(
     taskId: any;
     isActive: boolean;
     notes: string | '';
+    timerPause: boolean;
+    timerStart: boolean;
     setTimerPause: (timerPause: boolean) => void;
     setEditingTaskId: (editingTaskId: number | null) => void;
     setAddingTask: (addingTask: boolean) => void;
@@ -37,6 +41,9 @@ const Task = React.memo(
     const dispatch = useDispatch();
     const activeIndex = useSelector(
       (state: RootState) => state.taskList.activeTaskIndex
+    );
+    const activeStatus = useSelector(
+      (state: RootState) => state.taskList.activeIndexStatus
     );
     const pomodoroId = useSelector((state: any) => state.pomodoro.pomodoroId);
     const handleActiveTask = useCallback(() => {
@@ -57,14 +64,23 @@ const Task = React.memo(
     };
 
     const handleComplete = async () => {
-      if (activeIndex === taskId) {
+      const currentTime = Date.now();
+      if (
+        timerStart &&
+        timerPause &&
+        activeIndex === taskId &&
+        activeStatus !== 'Completed'
+      ) {
+        //Conditions for completing a resumed task
+        alert('Resume the Timer to complete Task');
+      } else if (activeIndex === taskId) {
         if (status !== 'Completed') {
           if (!pomodoroId) {
             alert('Start timer before Marking task as Done ');
           } else {
             const obj = {
               taskId,
-              pomodoroId,
+              currentTime,
             };
 
             //@ts-ignore
@@ -75,13 +91,13 @@ const Task = React.memo(
 
                 // @ts-ignore
                 dispatch(completeTask(obj));
-                setTimerPause(true);
-                dispatch(taskListActions.setComplete(taskId));
               } catch (error: any) {
                 if (error && error.response.status === 403)
                   alert('unauthenticated : Token expired');
                 else console.log(error);
               }
+              setTimerPause(true);
+              dispatch(taskListActions.setComplete(taskId));
             } else {
               setTimerPause(true);
               dispatch(taskListActions.setComplete(taskId));
@@ -89,7 +105,8 @@ const Task = React.memo(
           }
         } else {
           const obj = {
-            taskId: taskId,
+            taskId,
+            currentTime,
           };
           //@ts-ignore
           const response = await dispatch(restartTask(obj));

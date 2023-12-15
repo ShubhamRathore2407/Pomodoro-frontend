@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -22,7 +22,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
     localStorage.removeItem('access_token');
     localStorage.setItem('access_token', reResponse.data.accessToken);
   };
-
+  const image = useSelector((state: any) => state.user.image);
   //Fetching user details
   useEffect(() => {
     const fetchUserDataFunction = async () => {
@@ -43,7 +43,8 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
         }
       }
     };
-    fetchUserDataFunction();
+    if (localStorage.getItem('access_token') !== null) fetchUserDataFunction();
+    setLoggedIn(localStorage.getItem('access_token') !== null);
   }, []);
 
   const handleLoginOut = () => {
@@ -86,6 +87,11 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           >
             {loggedIn ? 'Logout' : 'Login'}
           </Icon>
+          {loggedIn && (
+            <DP>
+              <Image src={image} />
+            </DP>
+          )}
         </Buttons>
       </HeaderContent>
     </HeaderWrapper>
@@ -130,6 +136,24 @@ const Icon = styled.div<{
 `;
 const Buttons = styled.div`
   display: flex;
+`;
+
+const DP = styled.div`
+  margin-left: 8px;
+  padding: 2px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  cursor: pointer;
+`;
+const Image = styled.img`
+  width: 40px;
+  border-radius: 4px;
+  background-color: white;
 `;
 
 export default Header;

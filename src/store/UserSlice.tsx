@@ -4,6 +4,7 @@ import axios from '../helper/axiosConfig';
 const initialUserState = {
   username: '',
   userId: '',
+  image: '',
 };
 
 const baseURL = 'http://localhost:5000/api/auth';
@@ -16,13 +17,6 @@ export const fetchUserData = createAsyncThunk('user/getProfile', async () => {
     },
     withCredentials: true,
   });
-  // if (response.data === 'token expired') {
-  //   const reResponse = await axios.post(
-  //     'http://localhost:5000/api/auth/refreshToken'
-  //   );
-  //   localStorage.removeItem('access_token');
-  //   localStorage.setItem('access_token', reResponse.data.accessToken);
-  // }
   return response.data.message === 'token expired'
     ? 'token expired'
     : response.data.userData;
@@ -41,14 +35,16 @@ const userSlice = createSlice({
       localStorage.removeItem('access_token');
       state.username = '';
       state.userId = '';
+      state.image = '';
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUserData.fulfilled, (state, action) => {
-      const { username, userId } = action.payload;
+      const { username, userId, image } = action.payload;
 
       state.username = username;
       state.userId = userId;
+      state.image = image;
     });
   },
 });

@@ -1,17 +1,28 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { TaskInterface } from '../types';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllTasks } from '../store/TaskListSlice';
+import { RootState } from '../types';
 
-const Analytics = ({
-  setOpen,
-  taskList,
-}: {
-  setOpen: (open: boolean) => void;
-  taskList: TaskInterface[];
-}) => {
-  const [percentCompleted, setPercentCompleted] = useState<number>(0);
-  const [avg, setAvg] = useState<number>(0);
+const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
+  const dispatch = useDispatch();
+  const user_id = useSelector((state: any) => state.user.userId);
+  const taskList = useSelector((state: RootState) => state.taskList.tasks);
+  useEffect(() => {
+    const fetchUserDataFunction = async () => {
+      const obj = {
+        user_id,
+      };
+      //@ts-ignore
+      const response = await dispatch(fetchAllTasks(obj) as any);
+    };
+
+    fetchUserDataFunction();
+  }, []);
+
+  const [isActive, setIsActive] = useState<string>('Details');
   const handleOverlayClick = () => {
     setOpen(false); // Close the box when clicking outside
   };
@@ -19,32 +30,28 @@ const Analytics = ({
   const handleBoxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
-
-  useEffect(() => {
-    percent();
-    avgTime();
-  }, [taskList]);
-
-  const percent = () => {
-    const length = taskList.length;
-    const completed = taskList.filter(
-      (task) => task.status === 'Complete'
-    ).length;
-
-    setPercentCompleted((completed * 100) / length);
-  };
-
-  const avgTime = () => {
-    let completedLength = 0;
-    let timeForCompleted = 0;
-    taskList.forEach((task) => {
-      if (task.status === 'Complete') {
-        timeForCompleted += (task.pomos / 2) * 25;
-        completedLength++;
-      }
-    });
-
-    setAvg(timeForCompleted / completedLength);
+  function formatCreatedAt(dateString: any) {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    //@ts-ignore
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  }
+  function formatTime(timestamp: any) {
+    const date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+  const formattedTaskList = taskList.map((task: any) => ({
+    ...task,
+    createdAt: formatCreatedAt(task.createdAt),
+    started_at: task.started_at !== null ? formatTime(task.started_at) : null,
+    completed_at:
+      task.completed_at !== null ? formatTime(task.completed_at) : null,
+    active_time:
+      task.active_time / 1000 < 1 ? 0 : (task.active_time / 1000).toFixed(2),
+  }));
+  const selectTitle = (title: string) => {
+    setIsActive(title);
   };
 
   return (
@@ -52,299 +59,246 @@ const Analytics = ({
       onClick={handleOverlayClick}
       data-testid="analytics-wrapper"
     >
-      <Box onClick={handleBoxClick} data-testid="analytics-box">
-        {/* Box - Heading */}
-        <THeading
-          $txtdeco="none"
-          $justify="center"
-          $fs="30px"
-          $color="rgba(0, 0, 0, 0.7)"
-          $margin="10px 0"
-          data-testid="time-details"
-        >
-          Time Details
-        </THeading>
+      <AnalyticsPage>
+        <BoxWrapper onClick={handleBoxClick} data-testid="analytics-box">
+          <Box>
+            <Top>
+              <TopTitle
+                $isActive={isActive === 'Summary'}
+                onClick={() => selectTitle('Summary')}
+              >
+                Summary
+              </TopTitle>
+              <TopTitle
+                $isActive={isActive === 'Details'}
+                onClick={() => selectTitle('Details')}
+              >
+                Details
+              </TopTitle>
+            </Top>
+            <Bottom>
+              <BottomTitleWrapper>
+                <BottomTitle>Time Details</BottomTitle>
+              </BottomTitleWrapper>
+              <BottomListWrapper>
+                <ListHeadings>
+                  <Headings $width="20%" $tAlign="left">
+                    DATE
+                  </Headings>
+                  <Headings $width="53.5%" $tAlign="left">
+                    PROJECT / TASK
+                  </Headings>
+                  <Headings $width="15%" $tAlign="left">
+                    STATUS
+                  </Headings>
+                  <Headings $width="0" $tAlign="left">
+                    MINUTES
+                  </Headings>
+                </ListHeadings>
 
-        {/* Completed Task-heading */}
-        <THeading
-          $txtdeco="underline"
-          $justify="left"
-          $fs="18px"
-          $color="rgba(0, 0, 0, 0.5)"
-          $margin="15px 0 10px"
-          data-testid="completed-tasks"
-        >
-          Completed Tasks
-        </THeading>
-
-        {/* Completed Task Table Heading */}
-        <TableHeadingWrapper>
-          <Heading $justify="left" $w={40} data-testid="completed-tasks-task">
-            Task
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={20}
-            data-testid="completed-tasks-completed-in"
-          >
-            Completed In
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={20}
-            data-testid="completed-tasks-break-time"
-          >
-            Break time
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={20}
-            data-testid="completed-tasks-total-time"
-          >
-            Total Time
-          </Heading>
-        </TableHeadingWrapper>
-
-        {/* Completed Task List */}
-        <ListWrapper data-testid="completed-task-list-wrapper">
-          {taskList.map(
-            (task, index) =>
-              task.status === 'Complete' && (
-                <ListItem key={task._id} data-testid="completed-task-list-item">
-                  <Text $w={40} data-testid={`text-element-${index}`}>
-                    {task.text}
-                  </Text>
-                  <Time $w={20} data-testid={`time-element-${index}`}>
-                    {Math.round((task.pomos / 2) * 25)} min
-                  </Time>
-                  <Break $w={20} data-testid={`break-element-${index}`}>
-                    {(task.totalBreakTime / 120).toFixed(2)} min
-                  </Break>
-                  <Total $w={20} data-testid={`total-element-${index}`}>
-                    {(
-                      task.totalBreakTime / 120 +
-                      (task.pomos / 2) * 25
-                    ).toFixed(2)}{' '}
-                    min
-                  </Total>
-                </ListItem>
-              )
-          )}
-        </ListWrapper>
-
-        {/* Pending Task-heading */}
-        <THeading
-          $txtdeco="underline"
-          $justify="left"
-          $fs="18px"
-          $color="rgba(0, 0, 0, 0.5)"
-          $margin="20px 0 10px"
-          data-testid="pending-tasks"
-        >
-          Pending Tasks
-        </THeading>
-
-        {/* Pending Task Table Heading */}
-        <TableHeadingWrapper>
-          <Heading $justify="left" $w={40} data-testid="pending-tasks-task">
-            Task
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={30}
-            data-testid="pending-tasks-time-worked-till-now"
-          >
-            Time Worked Till Now
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={30}
-            data-testid="pending-tasks-break-time-till-now"
-          >
-            Break Time Till Now
-          </Heading>
-        </TableHeadingWrapper>
-
-        {/* Pending Task List */}
-        <ListWrapper data-testid="pending-task-list-wrapper">
-          {taskList.map(
-            (task, index) =>
-              task.status !== 'Complete' && (
-                <ListItem key={task._id} data-testid="pending-task-list-item">
-                  <Text $w={40} data-testid={`text-element-${index}`}>
-                    {task.text}
-                  </Text>
-                  <Time $w={30} data-testid={`time-element-${index}`}>
-                    {(task.pomos / 2) * 25} min
-                  </Time>
-                  <Break $w={30} data-testid={`break-element-${index}`}>
-                    {(task.totalBreakTime / 120).toFixed(2)} min
-                  </Break>
-                </ListItem>
-              )
-          )}
-        </ListWrapper>
-
-        {/* Final Stats Heading */}
-        <THeading
-          $txtdeco="underline"
-          $justify="left"
-          $fs="18px"
-          $color="rgba(0, 0, 0, 0.5)"
-          $margin="50px 0 10px"
-          data-testid="final-stats"
-        >
-          Final Stats
-        </THeading>
-
-        {/* Final Stats Table Heading */}
-        <TableHeadingWrapper>
-          <Heading
-            $justify="center"
-            $w={33.3}
-            data-testid="final-stats-total-tasks"
-          >
-            Total Tasks
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={33.3}
-            data-testid="final-stats-%tasks-completed"
-          >
-            %Tasks Completed
-          </Heading>
-          <Heading
-            $justify="center"
-            $w={33.3}
-            data-testid="final-stats-avg-time"
-          >
-            Avg. Time/Task
-          </Heading>
-        </TableHeadingWrapper>
-
-        {/* Final Stats List */}
-        <ListItem>
-          <Data $width="33.3%" data-testid="final-length">
-            {taskList.length}
-          </Data>
-          <Data $width="33.3%" data-testid="final-percent">
-            {percentCompleted | 0}%
-          </Data>
-          <Data $width="33.3%" data-testid="final-avg">
-            {avg | 0} min
-          </Data>
-        </ListItem>
-      </Box>
+                {formattedTaskList.map((task: any) => {
+                  return (
+                    task.started_at !== null && (
+                      <ListItemWrapper>
+                        <ListItem>
+                          <DateWrapper>
+                            <Datee $fWeight="bold" $mt="0">
+                              {task.createdAt}
+                            </Datee>
+                            <Datee $fWeight="normal" $mt="4px">
+                              {task.started_at} -{' '}
+                              {task.completed_at === null
+                                ? ''
+                                : task.completed_at}
+                            </Datee>
+                          </DateWrapper>
+                          <ProjectWrapper>
+                            <ProjectWrap>
+                              <Project>
+                                {task.project ? 'task.project' : 'No Project'}
+                              </Project>
+                            </ProjectWrap>
+                            <TaskWrap>
+                              <Task>{task.text}</Task>
+                            </TaskWrap>
+                          </ProjectWrapper>
+                          <Status>
+                            {task.status === 'Completed' ? 'Done' : 'Not Done'}
+                          </Status>
+                          <Minutes>{task.active_time}</Minutes>
+                          <Actions>
+                            <DeleteIcon />
+                          </Actions>
+                        </ListItem>
+                      </ListItemWrapper>
+                    )
+                  );
+                })}
+              </BottomListWrapper>
+            </Bottom>
+          </Box>
+        </BoxWrapper>
+      </AnalyticsPage>
     </AnalyticsWrapper>
   );
 };
 
 const AnalyticsWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0px;
+  left: 0px;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 100;
+  height: 100vh;
+  z-index: 2147483647;
+  pointer-events: auto;
   display: flex;
+  -webkit-box-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  transition: all 0.2s ease-in 0s;
+  overflow: hidden scroll;
+  padding: 48px 0px 58px;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
 `;
-
+const AnalyticsPage = styled.div`
+  color: rgb(34, 34, 34);
+  border-radius: 8px;
+  background-color: white;
+  position: relative;
+  max-width: 1000px;
+  width: 95%;
+  z-index: 2147483647;
+  border-top: 1px solid rgb(239, 239, 239);
+  border-bottom: 1px solid rgb(239, 239, 239);
+  margin: auto;
+  transition: all 0.2s ease-in 0s;
+  transform: translateY(20px);
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 20px, rgba(0, 0, 0, 0.1) 0px 3px 6px;
+  overflow: hidden;
+  display: block;
+`;
+const BoxWrapper = styled.div`
+  position: relative;
+  max-width: 980px;
+  margin: auto;
+`;
 const Box = styled.div`
-  border-radius: 10px;
-  padding: 5px 5px 5px 30px;
-  display: flex;
-  flex-direction: column;
-  margin: 15px;
-  background: white;
-  width: 40%;
-  font-family: 'Comic neue';
-  max-height: 100%;
-  overflow-y: auto;
-
-  /* Hide the scrollbar for webkit-based browsers (e.g., Chrome) */
-  &::-webkit-scrollbar {
-    width: 0.5rem; /* Set the width to control the space where the scrollbar would be */
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: transparent; /* Make the scrollbar thumb transparent */
-  }
-
-  /* Hide the scrollbar for Firefox */
-  scrollbar-width: thin; /* "thin" hides the scrollbar */
+  padding: 20px;
+  position: relative;
 `;
-
-const THeading = styled.div<{
-  $justify: string;
-  $fs: string;
-  $color: string;
-  $txtdeco: string;
-  $margin: string;
-}>`
+const Top = styled.div`
+  border: 2px solid rgb(225, 155, 153);
+  border-radius: 8px;
   display: flex;
-  justify-content: ${(props) => props.$justify};
-  font-size: ${(props) => props.$fs};
+  margin-top: 40px;
+  margin-bottom: 40px;
+`;
+const Bottom = styled.div``;
+const TopTitle = styled.div<{ $isActive: boolean }>`
+  cursor: pointer;
+  width: 50%;
+  text-align: center;
+  padding: 8px 0px;
   font-weight: bold;
-  letter-spacing: 1px;
-  color: ${(props) => props.$color};
-  text-decoration: ${(props) => props.$txtdeco};
-  margin: ${(props) => props.$margin};
-`;
+  font-size: 16px;
+  // border-right: 2px solid rgb(225, 155, 153);
 
-const Heading = styled.div<{ $w: number; $justify: string }>`
+  color: ${(props) => (!props.$isActive ? 'rgb(225, 155, 153)' : 'white')};
+  background-color: ${(props) => (props.$isActive ? 'rgb(225, 155, 153)' : '')};
+`;
+const BottomTitleWrapper = styled.div`
   display: flex;
-  justify-content: ${(props) => props.$justify};
-  font-size: 20px;
-  color: darkgrey;
-  width: ${(props) => props.$w}%;
+  align-items: center;
+  position: relative;
+  margin-top: 28px;
+  margin-bottom: 28px;
 `;
-
-const TableHeadingWrapper = styled.div`
+const BottomTitle = styled.div`
+  z-index: 1;
+  background-color: white;
+  padding-right: 12px;
+  font-weight: bold;
+  color: rgb(87, 87, 87);
+  font-size: 18px;
+`;
+const BottomListWrapper = styled.div`
+  position: relative;
+  border-bottom: 1px solid rgb(235, 235, 235);
+`;
+const ListHeadings = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  margin-bottom: 8px;
 `;
-
-const ListWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+const Headings = styled.div<{ $width: string; $tAlign: string }>`
+  font-size: 12px;
+  font-weight: bold;
+  color: rgb(163, 163, 163);
+  text-transform: uppercase;
+  width: ${(props) => props.$width};
+  text-align: ${(props) => props.$tAlign};
 `;
-
+const ListItemWrapper = styled.div`
+  border-top: 1px solid rgb(235, 235, 235);
+  padding: 12px 0px;
+`;
 const ListItem = styled.div`
   display: flex;
-  height: auto;
-  margin: 15px 0;
-  font-size: 20px;
+  justify-content: space-between;
+  align-items: center;
 `;
-
-const Data = styled.div<{ $width: string }>`
+const DateWrapper = styled.div`
+  width: 26%;
+`;
+const ProjectWrapper = styled.div`
+  overflow: hidden;
+  width: 70%;
   display: flex;
-  justify-content: center;
-  width: ${(props) => props.$width};
+  // justify-content: space-between;
+  align-items: center;
 `;
-
-const Text = styled.div<{ $w: number }>`
-  word-wrap: break-word;
-  width: ${(props) => props.$w}%;
+const ProjectWrap = styled.div`
+  width: 28%;
 `;
-
-const Time = styled.div<{ $w: number }>`
+const Project = styled.div`
+  font-size: 13px;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-right: 8px;
+  background-color: rgb(240, 240, 240);
+  color: rgb(163, 163, 163);
+  font-weight: bold;
+  display: inline-block;
+`;
+const Status = styled.div`
+  width: 20%;
+`;
+const Minutes = styled.div`
+  width: 10%;
+  text-align: left;
+`;
+const Actions = styled.div`
+  width: 5%;
   display: flex;
-  justify-content: center;
-  width: ${(props) => props.$w}%;
+  justify-content: flex-end;
+  position: relative;
 `;
-
-const Break = styled.div<{ $w: number }>`
-  display: flex;
-  justify-content: center;
-  width: ${(props) => props.$w}%;
+const Datee = styled.div<{ $fWeight: string; $mt: string }>`
+  color: rgb(187, 187, 187);
+  font-weight: ${(props) => props.$fWeight};
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-top: ${(props) => props.$mt};
 `;
-const Total = styled.div<{ $w: number }>`
-  display: flex;
-  justify-content: center;
-  width: ${(props) => props.$w}%;
+const TaskWrap = styled.div`
+  width: 60%;
 `;
-
+const Task = styled.div`
+  overflow: hidden;
+  color: rgb(85, 85, 85);
+  font-weight: bold;
+`;
 export default Analytics;
