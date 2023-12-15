@@ -153,9 +153,7 @@ const AnalyticsWrapper = styled.div`
   z-index: 2147483647;
   pointer-events: auto;
   display: flex;
-  -webkit-box-pack: center;
   justify-content: center;
-  -webkit-box-align: center;
   align-items: center;
   transition: all 0.2s ease-in 0s;
   overflow: hidden scroll;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -9,12 +9,18 @@ import {
 } from '../store/UserSlice';
 import axios from 'axios';
 
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loggedIn, setLoggedIn] = useState<boolean>(
     localStorage.getItem('access_token') !== null
   );
+  const [dropClick, setDropClick] = useState<boolean>(false);
   const generateAndSetNewTokens = async () => {
     const reResponse = await axios.post(
       'http://localhost:5000/api/auth/refreshToken'
@@ -23,6 +29,13 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
     localStorage.setItem('access_token', reResponse.data.accessToken);
   };
   const image = useSelector((state: any) => state.user.image);
+
+  const dropdownRef: any = useRef(null);
+  const handleClickOutside = (event: any) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropClick(false);
+    }
+  };
   //Fetching user details
   useEffect(() => {
     const fetchUserDataFunction = async () => {
@@ -45,6 +58,12 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
     };
     if (localStorage.getItem('access_token') !== null) fetchUserDataFunction();
     setLoggedIn(localStorage.getItem('access_token') !== null);
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, []);
 
   const handleLoginOut = () => {
@@ -61,9 +80,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   return (
     <HeaderWrapper>
       <HeaderContent>
-        <Icon $fsize={40} $border="" $font="Comic neue" $p="0" $bg={false}>
-          Pomo
-        </Icon>
+        <Logo>Pomo</Logo>
         <Buttons>
           <Icon
             data-testid="open-ana-page-button"
@@ -76,21 +93,61 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           >
             Analytics
           </Icon>
-          <Icon
-            data-testid="open-ana-page-button"
-            onClick={() => handleLoginOut()}
-            $fsize={12}
-            $border="1px solid rgba(255,255,255,0.5)"
-            $font="sans-serif"
-            $p="0 10px"
-            $bg={true}
-          >
-            {loggedIn ? 'Logout' : 'Login'}
-          </Icon>
+          {!loggedIn && (
+            <Icon
+              data-testid="open-ana-page-button"
+              onClick={() => handleLoginOut()}
+              $fsize={12}
+              $border="1px solid rgba(255,255,255,0.5)"
+              $font="sans-serif"
+              $p="0 10px"
+              $bg={true}
+            >
+              <AccountCircleIcon style={{ width: '35px' }} />
+              <Text>Login</Text>
+            </Icon>
+          )}
           {loggedIn && (
-            <DP>
-              <Image src={image} />
-            </DP>
+            <Main onClick={() => setDropClick(!dropClick)}>
+              <DP ref={dropdownRef}>
+                <Image src={image} />
+              </DP>
+              {dropClick && (
+                <DropdownWrapper>
+                  <DropItems>
+                    <PersonIcon
+                      style={{
+                        opacity: '0.8',
+                        width: '24px',
+                        marginRight: '8px',
+                      }}
+                    />
+                    Account
+                  </DropItems>
+                  <DropItems onClick={() => handleLoginOut()}>
+                    <LogoutIcon
+                      style={{
+                        opacity: '0.8',
+                        width: '24px',
+                        marginRight: '8px',
+                      }}
+                    />{' '}
+                    Logout
+                  </DropItems>
+                  <DivideLine />
+                  <DropItems>
+                    <DeleteForeverIcon
+                      style={{
+                        opacity: '0.8',
+                        width: '24px',
+                        marginRight: '8px',
+                      }}
+                    />{' '}
+                    Delete Account
+                  </DropItems>
+                </DropdownWrapper>
+              )}
+            </Main>
           )}
         </Buttons>
       </HeaderContent>
@@ -114,6 +171,15 @@ const HeaderContent = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0 5px;
+  font-size: 40px;
+  letter-spacing: 2px;
+  font-family: Comic neue;
+  cursor: pointer;
+`;
 const Icon = styled.div<{
   $fsize: number;
   $border: string;
@@ -123,21 +189,29 @@ const Icon = styled.div<{
 }>`
   display: flex;
   align-items: center;
-  margin: 0 5px;
-  font-size: ${(props) => props.$fsize}px;
-  border: ${(props) => props.$border};
-  letter-spacing: 2px;
-  font-family: ${(props) => props.$font};
-  padding: ${(props) => props.$p};
+  justify-content: center;
+  text-align: center;
+  border-radius: 4px;
   cursor: pointer;
+  opacity: 0.9;
+  background: none rgba(255, 255, 255, 0.2);
+  margin-left: 10px;
+  font-size: 13px;
+  padding: 8px 16px 8px 12px;
+  min-width: 70px;
+  border: none;
+  color: white !important;
+  font-family: Roboto;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+
   &:hover {
-    background: ${(props) => (props.$bg ? 'rgba(255,255,255,0.1)' : '')};
+    opacity: 1;
   }
 `;
 const Buttons = styled.div`
   display: flex;
 `;
-
 const DP = styled.div`
   margin-left: 8px;
   padding: 2px;
@@ -155,5 +229,45 @@ const Image = styled.img`
   border-radius: 4px;
   background-color: white;
 `;
+const Main = styled.div`
+  position: relative;
+`;
+const DropdownWrapper = styled.div`
+  border-radius: 4px;
+  opacity: 1;
+  padding: 4px 0px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 20px, rgba(0, 0, 0, 0.1) 0px 3px 6px;
+  display: block;
+  pointer-events: auto;
+  position: absolute;
+  background-color: white;
+  transform: translateY(10px);
+  width: 200px;
+  right: 0px;
+  font-family: 'Roboto', sans-serif;
+  z-index: 100;
+`;
+const DropItems = styled.div`
+  color: rgb(79, 43, 45);
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
 
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+`;
+const DivideLine = styled.div`
+  height: 1px;
+  width: 85%;
+  background-color: rgb(239, 239, 239);
+  margin: auto;
+`;
+const Text = styled.div`
+  display: block;
+  margin-left: 2px;
+`;
 export default Header;
