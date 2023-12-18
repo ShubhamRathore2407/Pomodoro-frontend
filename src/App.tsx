@@ -5,8 +5,6 @@ import LoginSignup from './pages/LoginSignup';
 import axios from 'axios';
 
 function App() {
-  axios.defaults.baseURL = 'http://localhost:5000/api';
-  axios.defaults.withCredentials = true;
   return (
     <Router>
       <Routes>

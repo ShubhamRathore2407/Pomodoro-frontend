@@ -7,11 +7,11 @@ const initialUserState = {
   image: '',
 };
 
-const baseURL = 'http://localhost:5000/api/auth';
+// const baseURL = 'http://localhost:5000/api/auth';
 
 export const fetchUserData = createAsyncThunk('user/getProfile', async () => {
   const access_token = localStorage.getItem('access_token');
-  const response = await axios.get(`${baseURL}/getProfile`, {
+  const response = await axios.get(`/auth/getProfile`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
@@ -23,7 +23,7 @@ export const fetchUserData = createAsyncThunk('user/getProfile', async () => {
 });
 
 export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
-  const response = await axios.post(`${baseURL}/logout`);
+  const response = await axios.post(`auth/logout`);
   return response.data;
 });
 

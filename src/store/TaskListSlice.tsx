@@ -9,13 +9,13 @@ const initialTaskListState: TaskListState = {
   activeIndexStatus: 'Pending',
 };
 
-const baseURL = 'http://localhost:5000/api/tasks';
+// const baseURL = 'http://localhost:5000/api/tasks';
 
 export const fetchAllTasks = createAsyncThunk(
   'tasks/fetchAllTasks',
   async (obj: any) => {
     try {
-      const response = await axios.post(`${baseURL}/allTasks`, obj);
+      const response = await axios.post(`/tasks/allTasks`, obj);
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data.tasks;
@@ -28,7 +28,7 @@ export const addNewTask = createAsyncThunk(
   'tasks/addNewTask',
   async (fieldValues, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${baseURL}/addTask`, fieldValues);
+      const response = await axios.post(`tasks/addTask`, fieldValues);
 
       return response.data.message === 'token expired'
         ? 'token expired'
@@ -43,7 +43,7 @@ export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async (obj, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${baseURL}/updateTask`, {
+      const response = await axios.put(`/tasks/updateTask`, {
         obj,
       });
       return response.data.message === 'token expired'
@@ -60,7 +60,7 @@ export const deleteTask = createAsyncThunk(
   async (taskId, { rejectWithValue }) => {
     try {
       // @ts-ignore
-      const response = await axios.delete(`${baseURL}/deleteTask`, {
+      const response = await axios.delete(`/tasks/deleteTask`, {
         data: { taskId },
       });
 
@@ -77,7 +77,7 @@ export const startResumeTask = createAsyncThunk(
   'task/startTask',
   async (obj) => {
     try {
-      const response = await axios.post(`${baseURL}/startResumeTask`, obj);
+      const response = await axios.post(`/tasks/startResumeTask`, obj);
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data.task;
@@ -90,7 +90,7 @@ export const completeTask = createAsyncThunk(
   'task/completeTask',
   async (obj) => {
     try {
-      const response = await axios.post(`${baseURL}/completeTask`, obj);
+      const response = await axios.post(`/tasks/completeTask`, obj);
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data.task;
@@ -101,7 +101,7 @@ export const completeTask = createAsyncThunk(
 );
 export const restartTask = createAsyncThunk('task/restartTask', async (obj) => {
   try {
-    const response = await axios.post(`${baseURL}/restartTask`, obj);
+    const response = await axios.post(`/tasks/restartTask`, obj);
     return response.data.message === 'token expired'
       ? 'token expired'
       : response.data.task;
@@ -113,7 +113,7 @@ export const pauseTask = createAsyncThunk(
   'task/pauseTask',
   async (obj, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${baseURL}/pauseTask`, {
+      const response = await axios.post(`/tasks/pauseTask`, {
         obj,
       });
       return response.data.message === 'token expired'
@@ -129,7 +129,7 @@ export const updateBreakTime = createAsyncThunk(
   'tasks/updateBreakTime',
   async (obj, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${baseURL}/updateTime`, { obj });
+      const response = await axios.put(`/tasks/updateTime`, { obj });
       return response.data.message === 'token expired' ? 'token expired' : obj;
     } catch (error: any) {
       console.error('Error updating break Time:', error);
@@ -141,7 +141,7 @@ export const deleteCompletedTasks = createAsyncThunk(
   'tasks/deleteCompletedTasks',
   async (userId: any, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${baseURL}/deleteCompletedTasks`, {
+      const response = await axios.delete(`/tasks/deleteCompletedTasks`, {
         data: { userId },
       });
 

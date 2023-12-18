@@ -55,7 +55,7 @@ const LoginSignup = () => {
           });
           localStorage.setItem('access_token', response.data.accessToken);
           //@ts-ignore
-          constdispatch(fetchUserData());
+          dispatch(fetchUserData());
           navigate('/');
         } catch (error) {
           console.log(error);

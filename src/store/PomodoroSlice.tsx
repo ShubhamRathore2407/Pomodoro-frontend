@@ -4,13 +4,13 @@ import axios from '../helper/axiosConfig';
 const innitialPomodoroState = {
   pomodoroId: null,
 };
-const baseURL = 'http://localhost:5000/api/pomodoro';
+// const baseURL = 'http://localhost:5000/api/pomodoro';
 
 export const createPomodoroSession = createAsyncThunk(
   'pomodoro/createPomodoroSession',
   async (obj) => {
     try {
-      const response = await axios.post(`${baseURL}/createPomodoro`, obj);
+      const response = await axios.post(`/pomodoro/createPomodoro`, obj);
 
       return response.data.message === 'token expired'
         ? 'token expired'
@@ -25,7 +25,7 @@ export const deletePomodoro = createAsyncThunk(
   'pomodoro/deletePomodoro',
   async (pomodoroId: any) => {
     try {
-      const response = await axios.delete(`${baseURL}/deletePomodoro`, {
+      const response = await axios.delete(`/pomodoro/deletePomodoro`, {
         data: { pomodoroId },
       });
       return response.data.message === 'token expired'
@@ -41,7 +41,7 @@ export const endPomodoro = createAsyncThunk(
   'pomodoro/endPomodoro',
   async (obj: any) => {
     try {
-      const response = await axios.post(`${baseURL}/endPomodoro`, {
+      const response = await axios.post(`/pomodoro/endPomodoro`, {
         obj,
       });
       return response.data.message === 'token expired' ? 'token expired' : obj;
