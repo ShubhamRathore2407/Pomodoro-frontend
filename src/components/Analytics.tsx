@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllTasks } from '../store/TaskListSlice';
 import { RootState } from '../types';
 
+import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+
 const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const dispatch = useDispatch();
   const user_id = useSelector((state: any) => state.user.userId);
@@ -30,7 +33,7 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const handleBoxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
-  function formatCreatedAt(dateString: any) {
+  function formatTimeFormat(dateString: any) {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     //@ts-ignore
     return new Date(dateString).toLocaleDateString('en-US', options);
@@ -43,7 +46,7 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   }
   const formattedTaskList = taskList.map((task: any) => ({
     ...task,
-    createdAt: formatCreatedAt(task.createdAt),
+    createdAt: formatTimeFormat(task.createdAt),
     started_at: task.started_at !== null ? formatTime(task.started_at) : null,
     completed_at:
       task.completed_at !== null ? formatTime(task.completed_at) : null,
@@ -52,6 +55,23 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   }));
   const selectTitle = (title: string) => {
     setIsActive(title);
+  };
+
+  //Pagination
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const indexOfLastTask = currentPage * itemsPerPage;
+  const indexOfFirstTask = indexOfLastTask - itemsPerPage;
+  const tasksToShow = formattedTaskList.slice(
+    indexOfFirstTask,
+    indexOfLastTask
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setTimeout(() => {
+      setCurrentPage(newPage);
+    }, 200);
   };
 
   return (
@@ -96,10 +116,10 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                   </Headings>
                 </ListHeadings>
 
-                {formattedTaskList.map((task: any) => {
+                {tasksToShow.map((task: any) => {
                   return (
                     task.started_at !== null && (
-                      <ListItemWrapper>
+                      <ListItemWrapper key={task._id}>
                         <ListItem>
                           <DateWrapper>
                             <Datee $fWeight="bold" $mt="0">
@@ -135,6 +155,29 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                   );
                 })}
               </BottomListWrapper>
+              <BottomPaginationWrapper>
+                <Pagination>
+                  <Test onClick={() => handlePageChange(currentPage - 1)}>
+                    <ArrowWrapper $visibility={currentPage === 1}>
+                      <ArrowBackIosNewRoundedIcon
+                        style={{ width: ' 22px', opacity: '0.6' }}
+                      />
+                    </ArrowWrapper>
+                  </Test>
+                  <PageNumber>{currentPage}</PageNumber>
+                  <Test onClick={() => handlePageChange(currentPage + 1)}>
+                    <ArrowWrapper
+                      $visibility={
+                        tasksToShow.length - currentPage * itemsPerPage < 0
+                      }
+                    >
+                      <ArrowForwardIosRoundedIcon
+                        style={{ width: ' 22px', opacity: '0.6' }}
+                      />
+                    </ArrowWrapper>
+                  </Test>
+                </Pagination>
+              </BottomPaginationWrapper>
             </Bottom>
           </Box>
         </BoxWrapper>
@@ -142,7 +185,9 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
     </AnalyticsWrapper>
   );
 };
-
+const Test = styled.div`
+  cursor: pointer;
+`;
 const AnalyticsWrapper = styled.div`
   background-color: rgba(0, 0, 0, 0.4);
   position: fixed;
@@ -298,5 +343,39 @@ const Task = styled.div`
   overflow: hidden;
   color: rgb(85, 85, 85);
   font-weight: bold;
+`;
+const BottomPaginationWrapper = styled.div`
+  margin-top: 18px;
+`;
+const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const ArrowWrapper = styled.div<{ $visibility: boolean }>`
+  min-width: 0px;
+  width: 40px;
+  background-color: white;
+  color: rgb(85, 85, 85);
+  border: 1px solid rgb(223, 223, 223);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  margin: 0px 2px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  visibility: ${(props) => (!props.$visibility ? '' : 'hidden')};
+  pointer-events: none;
+`;
+const PageNumber = styled.div`
+  width: 90px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: rgb(120, 120, 120);
 `;
 export default Analytics;

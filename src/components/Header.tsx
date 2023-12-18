@@ -13,6 +13,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+// import Account from './Account';
 
 const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(
     localStorage.getItem('access_token') !== null
   );
+  const [openAccount, setOpenAccount] = useState<boolean>(false);
   const [dropClick, setDropClick] = useState<boolean>(false);
   const generateAndSetNewTokens = async () => {
     const reResponse = await axios.post(
@@ -114,7 +116,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
               </DP>
               {dropClick && (
                 <DropdownWrapper>
-                  <DropItems>
+                  <DropItems onClick={() => setOpenAccount(!openAccount)}>
                     <PersonIcon
                       style={{
                         opacity: '0.8',
@@ -151,6 +153,11 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           )}
         </Buttons>
       </HeaderContent>
+      {/* {openAccount && (
+        <AccountWrapper>
+          <Account />
+        </AccountWrapper>
+      )} */}
     </HeaderWrapper>
   );
 };
@@ -160,16 +167,16 @@ const HeaderWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  color: white;
+  position: relative;
 `;
 const HeaderContent = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: white;
 `;
 const Logo = styled.div`
   display: flex;
@@ -270,4 +277,7 @@ const Text = styled.div`
   display: block;
   margin-left: 2px;
 `;
+// const AccountWrapper = styled.div`
+//   z-index: 1000;
+// `;
 export default Header;

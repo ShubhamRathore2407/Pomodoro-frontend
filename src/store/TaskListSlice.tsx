@@ -109,24 +109,45 @@ export const restartTask = createAsyncThunk('task/restartTask', async (obj) => {
     console.log(error);
   }
 });
-export const pauseTask = createAsyncThunk('task/pauseTask', async (obj) => {
-  try {
-    const response = await axios.post(`${baseURL}/pauseTask`, {
-      obj,
-    });
-    return response.data.message === 'token expired'
-      ? 'token expired'
-      : response.data.task;
-  } catch (error) {
-    console.log(error);
+export const pauseTask = createAsyncThunk(
+  'task/pauseTask',
+  async (obj, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${baseURL}/pauseTask`, {
+        obj,
+      });
+      return response.data.message === 'token expired'
+        ? 'token expired'
+        : response.data.task;
+    } catch (error: any) {
+      console.error('Error pausing task:', error);
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
 export const updateBreakTime = createAsyncThunk(
   'tasks/updateBreakTime',
   async (obj, { rejectWithValue }) => {
     try {
       const response = await axios.put(`${baseURL}/updateTime`, { obj });
       return response.data.message === 'token expired' ? 'token expired' : obj;
+    } catch (error: any) {
+      console.error('Error updating break Time:', error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+export const deleteCompletedTasks = createAsyncThunk(
+  'tasks/deleteCompletedTasks',
+  async (userId: any, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`${baseURL}/deleteCompletedTasks`, {
+        data: { userId },
+      });
+
+      return response.data.message === 'token expired'
+        ? 'token expired'
+        : response.data.tasks;
     } catch (error: any) {
       console.error('Error adding new task:', error);
       return rejectWithValue(error.message);
@@ -215,7 +236,14 @@ const taskListSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchAllTasks.fulfilled, (state: any, action: any) => {
       if (action.payload != null && action.payload !== 'token expired') {
-        state.tasks = action.payload;
+        const sortedTasks = action.payload.sort((a: any, b: any) => {
+          const timestampA = a.started_at;
+          const timestampB = b.started_at;
+
+          return timestampB - timestampA;
+        });
+
+        state.tasks = sortedTasks;
       }
     });
     builder.addCase(addNewTask.fulfilled, (state: any, action: any) => {
@@ -295,6 +323,11 @@ const taskListSlice = createSlice({
         if (!updateTask?.pomodoros.includes(pomodoroId)) {
           updateTask?.pomodoros.push(pomodoroId);
         }
+      }
+    });
+    builder.addCase(deleteCompletedTasks.fulfilled, (state, action) => {
+      if (action.payload != null && action.payload !== 'token expired') {
+        state.tasks = action.payload;
       }
     });
   },

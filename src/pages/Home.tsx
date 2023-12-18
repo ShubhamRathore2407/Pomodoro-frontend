@@ -11,7 +11,8 @@ import ProgressBar from '../components/ProgressBar';
 import Analytics from '../components/Analytics';
 
 import { RootState, TaskInterface } from '../types';
-import { fetchAllTasks } from '../store/TaskListSlice';
+import { deleteCompletedTasks, fetchAllTasks } from '../store/TaskListSlice';
+import axios from 'axios';
 
 const Home: React.FC = () => {
   const taskList = useSelector((state: RootState) => state.taskList.tasks);
@@ -45,6 +46,13 @@ const Home: React.FC = () => {
   );
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
+  const generateAndSetNewTokens = async () => {
+    const reResponse = await axios.post(
+      'http://localhost:5000/api/auth/refreshToken'
+    );
+    localStorage.removeItem('access_token');
+    localStorage.setItem('access_token', reResponse.data.accessToken);
+  };
   const handleAddTask = () => {
     setAddingTask(true);
     setEditingTaskId(null);
@@ -61,6 +69,24 @@ const Home: React.FC = () => {
       seconds: selectedInterval.sec,
     });
   };
+  const handleClearFinishedTasks = async () => {
+    //@ts-ignore
+    const response = await dispatch(deleteCompletedTasks(user_id));
+
+    if (response.payload === 'token expired') {
+      try {
+        await generateAndSetNewTokens();
+
+        //@ts-ignore
+        const response = await dispatch(deleteCompletedTasks(obj));
+      } catch (error: any) {
+        if (error && error.response.status === 403)
+          alert('unauthenticated : Token expired');
+        else console.log(error);
+      }
+    }
+  };
+
   const filteredTaskList = taskList.filter((task: any) => {
     return task.deleted !== true;
   });
@@ -90,7 +116,10 @@ const Home: React.FC = () => {
         {/* Progress Bar */}
         {filteredTaskList && filteredTaskList.length > 0 && (
           <ProgressBarComponent data-testid="progress-bar">
-            <ProgressBar taskList={filteredTaskList} />
+            <ProgressBar
+              taskList={filteredTaskList}
+              handleClearFinishedTasks={handleClearFinishedTasks}
+            />
           </ProgressBarComponent>
         )}
 
@@ -171,8 +200,13 @@ const Section = styled.div<{ $selectedIntervalColor?: string }>`
   background: ${(props) => props.$selectedIntervalColor};
   overflow: auto;
 `;
-const AnalyticsComponent = styled.div``;
-const ProgressBarComponent = styled.div``;
+const AnalyticsComponent = styled.div`
+  z-index: 1000;
+`;
+const ProgressBarComponent = styled.div`
+  width: 100%;
+  margin-left: 26px;
+`;
 const AddTaskInputComp = styled.div``;
 const Wrapper = styled.div`
   display: flex;
@@ -230,20 +264,18 @@ const TaskListComponent = styled.div`
   display: flex;
   flex-direction: column;
   width: 480px;
-  margin-top: 15px;
   height: 50%;
 `;
 
 export default Home;
 
 /**
- * analytics
- */
-
-/**
  * fixes & possibles :
  * - switching task while timer is on ------------------------- pass timerPause in Task comp
  * - add indexed DB for users not logged in
- *  - Fix timings of started_at and completed_at
  *
+ *
+ *
+ *
+ * // fix pagination
  */
