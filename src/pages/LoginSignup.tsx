@@ -35,7 +35,7 @@ const LoginSignup = () => {
     } else {
       if (currentPath === '/login') {
         try {
-          const response = await axios.post('/auth/login', {
+          const response = await axios.post('https://pomo-backend.onrender.com/auth/login', {
             email,
             password,
           });
@@ -48,7 +48,7 @@ const LoginSignup = () => {
         }
       } else {
         try {
-          const response = await axios.post('/auth/signup', {
+          const response = await axios.post('https://pomo-backend.onrender.com/auth/signup', {
             username,
             email,
             password,
@@ -83,7 +83,7 @@ const LoginSignup = () => {
         const email = res.data.email;
         const password = res.data.sub;
 
-        const response = await axios.post('/auth/googleSignUp', {
+        const response = await axios.post('https://pomo-backend.onrender.com/auth/googleSignUp', {
           picture,
           username,
           email,
