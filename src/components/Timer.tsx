@@ -6,7 +6,6 @@ import { IntervalSliceActions } from '../store/IntervalSlice';
 import {
   pauseTask,
   restartTask,
-  // restartTask,
   startResumeTask,
   updateBreakTime,
 } from '../store/TaskListSlice';
@@ -45,7 +44,6 @@ const Timer = ({
   const activeIndex = useSelector(
     (state: RootState) => state.taskList.activeTaskIndex
   );
-  // const taskList = useSelector((state: any) => state.taskList.tasks);
   const activeStatus = useSelector(
     (state: RootState) => state.taskList.activeIndexStatus
   );

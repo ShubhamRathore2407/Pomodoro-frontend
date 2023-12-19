@@ -2,8 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 import LoginSignup from './pages/LoginSignup';
+import axios from 'axios';
 
 function App() {
+  axios.defaults.withCredentials = true
   return (
     <Router>
       <Routes>
