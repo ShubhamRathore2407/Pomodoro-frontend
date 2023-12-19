@@ -51,7 +51,7 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
     completed_at:
       task.completed_at !== null ? formatTime(task.completed_at) : null,
     active_time:
-      task.active_time / 1000 < 1 ? 0 : (task.active_time / 1000).toFixed(2),
+      task.active_time / 60000 < 1 ? 0 : (task.active_time / 60000).toFixed(2),
   }));
   const selectTitle = (title: string) => {
     setIsActive(title);
