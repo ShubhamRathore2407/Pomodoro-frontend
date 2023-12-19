@@ -12,7 +12,7 @@ import Analytics from '../components/Analytics';
 
 import { RootState, TaskInterface } from '../types';
 import { deleteCompletedTasks, fetchAllTasks } from '../store/TaskListSlice';
-import axios from 'axios';
+import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
 
 const Home: React.FC = () => {
   const taskList = useSelector((state: RootState) => state.taskList.tasks);
@@ -46,13 +46,6 @@ const Home: React.FC = () => {
   );
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const generateAndSetNewTokens = async () => {
-    const reResponse = await axios.post(
-      'http://localhost:5000/api/auth/refreshToken'
-    );
-    localStorage.removeItem('access_token');
-    localStorage.setItem('access_token', reResponse.data.accessToken);
-  };
   const handleAddTask = () => {
     setAddingTask(true);
     setEditingTaskId(null);
@@ -95,12 +88,12 @@ const Home: React.FC = () => {
     <Section $selectedIntervalColor={selectedIntervalColor}>
       <Wrapper>
         {/* Header */}
-        <HeaderComponent data-testid="header-component">
+        <HeaderComponent data-testid='header-component'>
           <Header setOpen={setOpen} />
         </HeaderComponent>
 
         {/* Timer */}
-        <TimerComponent data-testid="timer-component">
+        <TimerComponent data-testid='timer-component'>
           <Gap />
           <Timer
             setState={setState}
@@ -115,7 +108,7 @@ const Home: React.FC = () => {
 
         {/* Progress Bar */}
         {filteredTaskList && filteredTaskList.length > 0 && (
-          <ProgressBarComponent data-testid="progress-bar">
+          <ProgressBarComponent data-testid='progress-bar'>
             <ProgressBar
               taskList={filteredTaskList}
               handleClearFinishedTasks={handleClearFinishedTasks}
@@ -124,14 +117,14 @@ const Home: React.FC = () => {
         )}
 
         {/* Task List */}
-        <TaskListComponent data-testid="task-list-component">
+        <TaskListComponent data-testid='task-list-component'>
           {filteredTaskList &&
             filteredTaskList.length > 0 &&
             Array.isArray(filteredTaskList) &&
             filteredTaskList.map((task: TaskInterface) =>
               editingTaskId === task?._id ? (
                 <AddTaskInput
-                  data-testid="edit-task-component"
+                  data-testid='edit-task-component'
                   setTimerPause={setTimerPause}
                   key={task._id}
                   setAddingTask={setAddingTask}
@@ -142,7 +135,7 @@ const Home: React.FC = () => {
                 />
               ) : (
                 <Task
-                  data-testid="task-list-item"
+                  data-testid='task-list-item'
                   key={task._id}
                   taskId={task._id}
                   text={task.text}
@@ -163,19 +156,19 @@ const Home: React.FC = () => {
         {!addingTask ? (
           <AddTaskComponent
             onClick={handleAddTask}
-            data-testid="add-task-button-component"
+            data-testid='add-task-button-component'
           >
             <AddTaskButton />
           </AddTaskComponent>
         ) : (
-          <AddTaskInputComp data-testid="add-task-input-component">
+          <AddTaskInputComp data-testid='add-task-input-component'>
             <AddTaskInput
               setAddingTask={setAddingTask}
               setEditingTaskId={setEditingTaskId}
               setTimerPause={setTimerPause}
               taskId={null}
-              text=""
-              notes=""
+              text=''
+              notes=''
             />
           </AddTaskInputComp>
         )}
@@ -183,7 +176,7 @@ const Home: React.FC = () => {
       </Wrapper>
 
       {open && (
-        <AnalyticsComponent data-testid="analytics-component">
+        <AnalyticsComponent data-testid='analytics-component'>
           <Analytics setOpen={setOpen} />
         </AnalyticsComponent>
       )}

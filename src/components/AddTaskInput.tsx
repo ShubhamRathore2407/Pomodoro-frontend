@@ -8,7 +8,7 @@ import {
   taskListActions,
   updateTask,
 } from '../store/TaskListSlice';
-import axios from 'axios';
+import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
 
 const AddTaskInput = ({
   setAddingTask,
@@ -32,14 +32,6 @@ const AddTaskInput = ({
   const [inputNotes, setInputNotes] = useState(notes || '');
   const [addNotes, setAddNotes] = useState<boolean>(inputNotes !== '');
 
-  const generateAndSetTokens = async () => {
-    const reResponse = await axios.post(
-      'http://localhost:5000/api/auth/refreshToken'
-    );
-
-    localStorage.removeItem('access_token');
-    localStorage.setItem('access_token', reResponse.data.accessToken);
-  };
   const handleSaveTask = async () => {
     const fieldValues = {
       user_id: userId,
@@ -54,7 +46,7 @@ const AddTaskInput = ({
         const response = await dispatch(addNewTask(fieldValues) as any);
         if (response.payload === 'token expired') {
           try {
-            await generateAndSetTokens();
+            await generateAndSetNewTokens();
             // @ts-ignore
             dispatch(addNewTask(fieldValues) as any);
           } catch (error: any) {
@@ -73,7 +65,7 @@ const AddTaskInput = ({
         const response = await dispatch(updateTask(obj) as any);
         if (response.payload === 'token expired') {
           try {
-            await generateAndSetTokens();
+            await generateAndSetNewTokens();
             // @ts-ignore
             dispatch(updateTask(obj) as any);
           } catch (error: any) {
@@ -98,11 +90,7 @@ const AddTaskInput = ({
     const response = await dispatch(deleteTask(taskId) as any);
     if (response.payload === 'token expired') {
       try {
-        const reResponse = await axios.post(
-          'http://localhost:5000/api/auth/refreshToken'
-        );
-        localStorage.removeItem('access_token');
-        localStorage.setItem('access_token', reResponse.data.accessToken);
+        await generateAndSetNewTokens();
         // @ts-ignore
         dispatch(deleteTask(taskId) as any);
       } catch (error: any) {
@@ -114,11 +102,11 @@ const AddTaskInput = ({
   return (
     <AddInputWrapper>
       <Input
-        data-testid="input-text"
-        type="text"
+        data-testid='input-text'
+        type='text'
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
-        placeholder="enter your task..."
+        placeholder='enter your task...'
       />
       <Optionals $addNotes={addNotes}>
         {inputNotes === '' ? (
@@ -146,28 +134,28 @@ const AddTaskInput = ({
         <Div>
           {taskId && (
             <Button
-              data-testid="delete-button"
+              data-testid='delete-button'
               onClick={() => handleDelete(taskId)}
-              $color="#808080"
-              $bc="#dddddd"
+              $color='#808080'
+              $bc='#dddddd'
             >
               Delete
             </Button>
           )}
         </Div>
         <Button
-          data-testid="cancel-button"
+          data-testid='cancel-button'
           onClick={handleCancel}
-          $color="#808080"
-          $bc="#dddddd"
+          $color='#808080'
+          $bc='#dddddd'
         >
           Cancel
         </Button>
         <Button
-          data-testid="save-update-button"
+          data-testid='save-update-button'
           onClick={handleSaveTask}
-          $color="white"
-          $bc="#333333"
+          $color='white'
+          $bc='#333333'
         >
           {!taskId ? 'Save' : 'Update'}
         </Button>

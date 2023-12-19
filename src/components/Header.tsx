@@ -7,12 +7,12 @@ import {
   fetchUserData,
   logoutUser,
 } from '../store/UserSlice';
-import axios from 'axios';
 
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
 // import Account from './Account';
 
 const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
@@ -23,13 +23,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   );
   const [openAccount, setOpenAccount] = useState<boolean>(false);
   const [dropClick, setDropClick] = useState<boolean>(false);
-  const generateAndSetNewTokens = async () => {
-    const reResponse = await axios.post(
-      'http://localhost:5000/api/auth/refreshToken'
-    );
-    localStorage.removeItem('access_token');
-    localStorage.setItem('access_token', reResponse.data.accessToken);
-  };
+
   const image = useSelector((state: any) => state.user.image);
 
   const dropdownRef: any = useRef(null);

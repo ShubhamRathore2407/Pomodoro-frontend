@@ -18,7 +18,7 @@ import {
 
 import { RootState } from '../types';
 import { taskListActions } from '../store/TaskListSlice';
-import axios from 'axios';
+import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
 
 const Timer = ({
   state,
@@ -214,13 +214,6 @@ const Timer = ({
       // Notifications are not supported
       console.log('Notifications are not supported by this browser.');
     }
-  };
-  const generateAndSetNewTokens = async () => {
-    const reResponse = await axios.post(
-      'http://localhost:5000/api/auth/refreshToken'
-    );
-    localStorage.removeItem('access_token');
-    localStorage.setItem('access_token', reResponse.data.accessToken);
   };
   const handleStartClick = async () => {
     const currentTime = Date.now();
@@ -451,27 +444,27 @@ const Timer = ({
         <Button1
           isselected={selectedButton === 'Pomodoro' ? 'true' : 'false'}
           onClick={() => handleButtonClick('Pomodoro')}
-          data-testid="pomodoro-button"
+          data-testid='pomodoro-button'
         >
           Pomodoro
         </Button1>
         <Button1
           isselected={selectedButton === 'Short Break' ? 'true' : 'false'}
           onClick={() => handleButtonClick('Short Break')}
-          data-testid="short-break-button"
+          data-testid='short-break-button'
         >
           Short Break
         </Button1>
         <Button1
           isselected={selectedButton === 'Long Break' ? 'true' : 'false'}
           onClick={() => handleButtonClick('Long Break')}
-          data-testid="long-break-button"
+          data-testid='long-break-button'
         >
           Long Break
         </Button1>
       </ButtonGrp1>
       {/*Count Down timer*/}
-      <CountDown data-testid="countdown-component">
+      <CountDown data-testid='countdown-component'>
         {state.minutes}:
         {state.seconds < 10 ? '0' + state.seconds : state.seconds}
       </CountDown>
@@ -481,7 +474,7 @@ const Timer = ({
           <Button2
             $color={selectedInterval.color}
             onClick={() => handleStartClick()}
-            data-testid="start-pause-resume-button"
+            data-testid='start-pause-resume-button'
           >
             {!timerStart ? 'Start' : !timerPause ? 'Pause' : 'Resume'}
           </Button2>
@@ -489,7 +482,7 @@ const Timer = ({
             <Button2
               $color={selectedInterval.color}
               onClick={() => handleResetTimer()}
-              data-testid="reset-button"
+              data-testid='reset-button'
             >
               Reset
             </Button2>

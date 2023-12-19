@@ -12,7 +12,7 @@ import {
 } from '../store/TaskListSlice';
 
 import { RootState } from '../types';
-import axios from 'axios';
+import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
 
 const Task = React.memo(
   ({
@@ -54,14 +54,6 @@ const Task = React.memo(
     useEffect(() => {
       dispatch(taskListActions.setStatus(activeIndex));
     }, [activeIndex]);
-
-    const generateAndSetNewTokens = async () => {
-      const reResponse = await axios.post(
-        'http://localhost:5000/api/auth/refreshToken'
-      );
-      localStorage.removeItem('access_token');
-      localStorage.setItem('access_token', reResponse.data.accessToken);
-    };
 
     const handleComplete = async () => {
       const currentTime = Date.now();
@@ -139,13 +131,13 @@ const Task = React.memo(
       <TaskWrapper
         onClick={handleActiveTask}
         $active={isActive}
-        data-testid="task-component"
+        data-testid='task-component'
       >
-        <LeftBand $active={isActive} data-testid="left-band" />
+        <LeftBand $active={isActive} data-testid='left-band' />
         <Content>
           <Top>
             <TaskAltRoundedIcon
-              data-testid="tick"
+              data-testid='tick'
               onClick={handleComplete}
               style={{
                 fontSize: '30px',
@@ -153,13 +145,13 @@ const Task = React.memo(
                 color: `${status === 'Completed' ? '#32CD32' : 'gray'}`,
               }}
             />
-            <Text $complete={status === 'Completed'} data-testid="text">
+            <Text $complete={status === 'Completed'} data-testid='text'>
               {text}
             </Text>
             <KeyboardArrowDownIcon
               onClick={handleEdit}
               style={{ fontSize: '30px', color: 'gray' }}
-              data-testid="arrow-dropDown"
+              data-testid='arrow-dropDown'
             />
           </Top>
           {notes && (
