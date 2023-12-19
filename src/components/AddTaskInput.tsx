@@ -46,7 +46,11 @@ const AddTaskInput = ({
         const response = await dispatch(addNewTask(fieldValues) as any);
         if (response.payload === 'token expired') {
           try {
-            await generateAndSetNewTokens();
+            //----------------------------------------------------change---------------------//
+            // await generateAndSetNewTokens();
+              const reResponse = await axios.post('http://localhost:5000/api/auth/refreshToken');
+              localStorage.removeItem('access_token');
+              localStorage.setItem('access_token', reResponse.data.accessToken);
             // @ts-ignore
             dispatch(addNewTask(fieldValues) as any);
           } catch (error: any) {
