@@ -49,7 +49,7 @@ const LoginSignup = () => {
         }
       } else {
         try {
-          const response = await axios.post(`${baseURL}/auth/signup`, {
+          const response = await axios.post(`https://pomo-backend.onrender.com/api/auth/signup`, {
             username,
             email,
             password,
