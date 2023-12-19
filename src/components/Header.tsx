@@ -85,24 +85,24 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
         <Logo>Pomo</Logo>
         <Buttons>
           <Icon
-            data-testid="open-ana-page-button"
+            data-testid='open-ana-page-button'
             onClick={() => setOpen(true)}
             $fsize={12}
-            $border="1px solid rgba(255,255,255,0.5)"
-            $font="sans-serif"
-            $p="0 10px"
+            $border='1px solid rgba(255,255,255,0.5)'
+            $font='sans-serif'
+            $p='0 10px'
             $bg={true}
           >
             Analytics
           </Icon>
           {!loggedIn && (
             <Icon
-              data-testid="open-ana-page-button"
+              data-testid='open-ana-page-button'
               onClick={() => handleLoginOut()}
               $fsize={12}
-              $border="1px solid rgba(255,255,255,0.5)"
-              $font="sans-serif"
-              $p="0 10px"
+              $border='1px solid rgba(255,255,255,0.5)'
+              $font='sans-serif'
+              $p='0 10px'
               $bg={true}
             >
               <AccountCircleIcon style={{ width: '35px' }} />
@@ -112,7 +112,18 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           {loggedIn && (
             <Main onClick={() => setDropClick(!dropClick)}>
               <DP ref={dropdownRef}>
-                <Image src={image} />
+                {image !== '' ? (
+                  <Image src={image} />
+                ) : (
+                  <Image
+                    src='https://pomofocus.io/icons/user-big-black.png'
+                    style={{
+                      width: '42px',
+                      borderRadius: '4px',
+                      backgroundColor: 'white',
+                    }}
+                  />
+                )}
               </DP>
               {dropClick && (
                 <DropdownWrapper>

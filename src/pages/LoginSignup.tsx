@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { fetchUserData } from '../store/UserSlice';
 
 const LoginSignup = () => {
-    const baseURL = 'https://pomo-backend.onrender.com/api';
+  const baseURL = 'https://pomo-backend.onrender.com/api';
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -84,7 +84,7 @@ const LoginSignup = () => {
         const email = res.data.email;
         const password = res.data.sub;
 
-         const response = await axios.post(`${baseURL}/auth/googleSignUp`, {
+        const response = await axios.post(`${baseURL}/auth/googleSignUp`, {
           picture,
           username,
           email,
@@ -105,7 +105,7 @@ const LoginSignup = () => {
       <Icon
         onClick={() => navigate('/')}
         $fsize={40}
-        $font="Comic neue"
+        $font='Comic neue'
         $color={selectedIntervalColor}
       >
         Pomo
@@ -120,8 +120,8 @@ const LoginSignup = () => {
                 width: '18px',
                 marginRight: '8px',
               }}
-              src="https://pomofocus.io/icons/g-logo.png"
-              alt="google logo"
+              src='https://pomofocus.io/icons/g-logo.png'
+              alt='google logo'
             />
             <Text>{!isLogIn ? 'Signup with Google' : 'Login with Google'}</Text>
           </GoogleLoginButton>
@@ -146,9 +146,9 @@ const LoginSignup = () => {
             <LabelInput>
               <Label>USERNAME</Label>
               <Input
-                name="username"
-                type="username"
-                placeholder="example"
+                name='username'
+                type='username'
+                placeholder='example'
                 value={username}
                 onChange={handleChange}
               ></Input>
@@ -157,9 +157,9 @@ const LoginSignup = () => {
           <LabelInput>
             <Label>EMAIL</Label>
             <Input
-              name="email"
-              type="email"
-              placeholder="example@mail.com"
+              name='email'
+              type='email'
+              placeholder='example@mail.com'
               value={email}
               onChange={handleChange}
             ></Input>
@@ -167,14 +167,14 @@ const LoginSignup = () => {
           <LabelInput>
             <Label>PASSWORD</Label>
             <Input
-              name="password"
-              type="password"
+              name='password'
+              type='password'
               value={password}
               onChange={handleChange}
             ></Input>
           </LabelInput>
           <LoginSignupButtonWrap>
-            <LoginSignupButton type="submit">
+            <LoginSignupButton type='submit'>
               {!isLogIn ? 'Signup' : 'Login'}
             </LoginSignupButton>
           </LoginSignupButtonWrap>
