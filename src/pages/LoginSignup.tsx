@@ -36,7 +36,7 @@ const LoginSignup = () => {
     } else {
       if (currentPath === '/login') {
         try {
-          const response = await axios.post(`${baseURL}/auth/login`', {
+          const response = await axios.post(`${baseURL}/auth/login`, {
             email,
             password,
           });
