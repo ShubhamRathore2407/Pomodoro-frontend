@@ -9,7 +9,6 @@ import {
   updateTask,
 } from '../store/TaskListSlice';
 import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
-import axios from "axios";  // change
 
 const AddTaskInput = ({
   setAddingTask,
@@ -47,11 +46,7 @@ const AddTaskInput = ({
         const response = await dispatch(addNewTask(fieldValues) as any);
         if (response.payload === 'token expired') {
           try {
-            //----------------------------------------------------change---------------------//
-            // await generateAndSetNewTokens();
-              const reResponse = await axios.post('http://localhost:5000/api/auth/refreshToken');
-              localStorage.removeItem('access_token');
-              localStorage.setItem('access_token', reResponse.data.accessToken);
+            await generateAndSetNewTokens();
             // @ts-ignore
             dispatch(addNewTask(fieldValues) as any);
           } catch (error: any) {
