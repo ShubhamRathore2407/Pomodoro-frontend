@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { fetchUserData } from '../store/UserSlice';
 
 const LoginSignup = () => {
+    const baseURL = 'https://pomo-backend.onrender.com/api';
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const LoginSignup = () => {
     } else {
       if (currentPath === '/login') {
         try {
-          const response = await axios.post('https://pomo-backend.onrender.com/auth/login', {
+          const response = await axios.post(`${baseURL}/auth/login`', {
             email,
             password,
           });
@@ -48,7 +49,7 @@ const LoginSignup = () => {
         }
       } else {
         try {
-          const response = await axios.post('https://pomo-backend.onrender.com/auth/signup', {
+          const response = await axios.post(`${baseURL}/auth/signup`, {
             username,
             email,
             password,
@@ -83,7 +84,7 @@ const LoginSignup = () => {
         const email = res.data.email;
         const password = res.data.sub;
 
-        const response = await axios.post('https://pomo-backend.onrender.com/auth/googleSignUp', {
+         const response = await axios.post(`${baseURL}/auth/googleSignUp`, {
           picture,
           username,
           email,
