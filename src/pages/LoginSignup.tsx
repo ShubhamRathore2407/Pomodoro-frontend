@@ -8,7 +8,8 @@ import { useState } from 'react';
 import { fetchUserData } from '../store/UserSlice';
 
 const LoginSignup = () => {
-  const baseURL = 'https://pomo-backend.onrender.com/api';
+  // const baseURL = 'https://pomo-backend.onrender.com/api';
+  const baseURL = 'http://localhost:5000/api';
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
   const dispatch = useDispatch();
