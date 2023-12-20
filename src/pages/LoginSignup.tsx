@@ -1,18 +1,15 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../types';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
-import { fetchUserData } from '../store/UserSlice';
-
 const LoginSignup = () => {
   const baseURL = 'https://pomo-backend.onrender.com/api';
   // const baseURL = 'http://localhost:5000/api';
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const selectedIntervalColor = useSelector(
     (state: RootState) => state.interval.interval.color
   );
@@ -42,8 +39,6 @@ const LoginSignup = () => {
             password,
           });
           localStorage.setItem('access_token', response.data.accessToken);
-          //@ts-ignore
-          dispatch(fetchUserData());
           navigate('/');
         } catch (error) {
           console.log(error);
@@ -56,8 +51,6 @@ const LoginSignup = () => {
             password,
           });
           localStorage.setItem('access_token', response.data.accessToken);
-          //@ts-ignore
-          dispatch(fetchUserData());
           navigate('/');
         } catch (error) {
           console.log(error);
@@ -92,8 +85,6 @@ const LoginSignup = () => {
           password,
         });
         localStorage.setItem('access_token', response.data.accessToken);
-        //@ts-ignore
-        dispatch(fetchUserData());
         navigate('/');
       } catch (error) {
         console.log(error);

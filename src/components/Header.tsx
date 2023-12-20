@@ -25,7 +25,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const [dropClick, setDropClick] = useState<boolean>(false);
 
   const user = useSelector((state: any) => state.user);
-  const { userId, image } = user
+  const { image } = user
 
   const dropdownRef: any = useRef(null);
   const handleClickOutside = (event: any) => {
@@ -33,6 +33,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       setDropClick(false);
     }
   };
+
   //Fetching user details
   useEffect(() => {
     const fetchUserDataFunction = async () => {
@@ -47,16 +48,20 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           dispatch(fetchUserData());
         } catch (error: any) {
           if (error && error.response.status === 403) {
-            localStorage.removeItem('access_token');
-            alert('unauthenticated : Token expired');
+            {
+              localStorage.removeItem('access_token');
+              alert('unauthenticated : Token expired');
+              return
+            }
           } else console.log(error);
         }
-      } else {
-        if (response?.error) {
-          alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
-        }
+      } else if (response?.error) {
+        alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+        return
       }
+
     };
+
     if (localStorage.getItem('access_token') !== null) fetchUserDataFunction();
 
     document.addEventListener('click', handleClickOutside);
@@ -65,10 +70,6 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-  setLoggedIn(userId !== "")
-  }, [user])
 
   const handleLoginOut = () => {
     if (!loggedIn) {

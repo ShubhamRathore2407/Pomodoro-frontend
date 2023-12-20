@@ -276,12 +276,15 @@ const Timer = ({
                   //@ts-ignore
                   dispatch(pauseTask(taskId));
                 } catch (error: any) {
-                  if (error && error.response.status === 403)
+                  if (error && error.response.status === 403) {
                     alert('unauthenticated : Token expired');
+                    return
+                  }
                   else console.log(error);
                 }
               } else if (response?.error) {
                 alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+                return
               }
             }
             console.log('Pause : Pause the Task');
@@ -301,12 +304,15 @@ const Timer = ({
                 //@ts-ignore
                 dispatch(dispatch(restartTask(obj)));
               } catch (error: any) {
-                if (error && error.response.status === 403)
+                if (error && error.response.status === 403) {
                   alert('unauthenticated : Token expired');
+                  return
+                }
                 else console.log(error);
               }
             } else if (response?.error) {
               alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+              return
             }
             dispatch(taskListActions.setInComplete(activeIndex));
           }
@@ -327,6 +333,7 @@ const Timer = ({
               //@ts-ignore
               createPomodoroSession(obj)
             );
+
             if (response.payload === 'token expired') {
               try {
                 await generateAndSetNewTokens();
@@ -335,12 +342,15 @@ const Timer = ({
                   createPomodoroSession(obj)
                 );
               } catch (error: any) {
-                if (error && error.response.status === 403)
+                if (error && error.response.status === 403) {
                   alert('unauthenticated : Token expired');
+                  return
+                }
                 else console.log(error);
               }
             } else if (response?.error) {
               alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+              return;
             }
             currPomodoroId = response.payload.pomodoro;
 
@@ -382,12 +392,15 @@ const Timer = ({
                   startResumeTask(obj)
                 );
               } catch (error: any) {
-                if (error && error.response.status === 403)
+                if (error && error.response.status === 403) {
                   alert('unauthenticated : Token expired');
+                  return
+                }
                 else console.log(error);
               }
             } else if (response?.error) {
               alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+              return
             }
           }
           setTimerPause(false);
@@ -415,12 +428,15 @@ const Timer = ({
                 //@ts-ignore
                 dispatch(pauseTask(obj));
               } catch (error: any) {
-                if (error && error.response.status === 403)
+                if (error && error.response.status === 403) {
                   alert('unauthenticated : Token expired');
+                  return
+                }
                 else console.log(error);
               }
             } else if (response?.error) {
               alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+              return
             }
           }
           console.log('Pause : Pause the Task');
@@ -442,12 +458,15 @@ const Timer = ({
           //@ts-ignore
           dispatch(deletePomodoro(pomodoroId));
         } catch (error: any) {
-          if (error && error.response.status === 403)
+          if (error && error.response.status === 403) {
             alert('unauthenticated : Token expired');
+            return
+          }
           else console.log(error);
         }
       } else if (response?.error) {
         alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+        return
       }
     }
   };

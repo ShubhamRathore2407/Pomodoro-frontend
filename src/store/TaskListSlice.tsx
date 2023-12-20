@@ -13,14 +13,15 @@ const initialTaskListState: TaskListState = {
 
 export const fetchAllTasks = createAsyncThunk(
   'tasks/fetchAllTasks',
-  async (obj: any) => {
+  async (obj: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`/tasks/allTasks`, obj);
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data.tasks;
-    } catch (error) {
-      console.log('fetchAllTasks >> ', error);
+    } catch (error: any) {
+      console.error('Error adding new task:', error);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -75,38 +76,41 @@ export const deleteTask = createAsyncThunk(
 );
 export const startResumeTask = createAsyncThunk(
   'task/startTask',
-  async (obj) => {
+  async (obj: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`/tasks/startResumeTask`, obj);
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data.task;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error('Error adding new task:', error);
+      return rejectWithValue(error.message);
     }
   }
 );
 export const completeTask = createAsyncThunk(
   'task/completeTask',
-  async (obj) => {
+  async (obj: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`/tasks/completeTask`, obj);
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data.task;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error('Error adding new task:', error);
+      return rejectWithValue(error.message);
     }
   }
 );
-export const restartTask = createAsyncThunk('task/restartTask', async (obj) => {
+export const restartTask = createAsyncThunk('task/restartTask', async (obj: any, { rejectWithValue }) => {
   try {
     const response = await axios.post(`/tasks/restartTask`, obj);
     return response.data.message === 'token expired'
       ? 'token expired'
       : response.data.task;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    console.error('Error adding new task:', error);
+    return rejectWithValue(error.message);
   }
 });
 export const pauseTask = createAsyncThunk(

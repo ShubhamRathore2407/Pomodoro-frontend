@@ -29,12 +29,15 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           //@ts-ignore
           await dispatch(fetchAllTasks(obj) as any);
         } catch (error: any) {
-          if (error && error.response.status === 403)
+          if (error && error.response.status === 403) {
             alert('unauthenticated : Token expired');
+            return
+          }
         }
       } else {
         if (response?.error) {
           alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+          return
         }
       }
     };

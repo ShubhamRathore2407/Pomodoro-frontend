@@ -8,22 +8,24 @@ const innitialPomodoroState = {
 
 export const createPomodoroSession = createAsyncThunk(
   'pomodoro/createPomodoroSession',
-  async (obj) => {
+  async (obj: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`/pomodoro/createPomodoro`, obj);
+      console.log(response);
 
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error('Error adding new task:', error);
+      return rejectWithValue(error.message);
     }
   }
 );
 
 export const deletePomodoro = createAsyncThunk(
   'pomodoro/deletePomodoro',
-  async (pomodoroId: any) => {
+  async (pomodoroId: any, { rejectWithValue }) => {
     try {
       const response = await axios.delete(`/pomodoro/deletePomodoro`, {
         data: { pomodoroId },
@@ -31,22 +33,26 @@ export const deletePomodoro = createAsyncThunk(
       return response.data.message === 'token expired'
         ? 'token expired'
         : response.data;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error('Error adding new task:', error);
+      return rejectWithValue(error.message);
     }
   }
 );
 
 export const endPomodoro = createAsyncThunk(
   'pomodoro/endPomodoro',
-  async (obj: any) => {
+  async (obj: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`/pomodoro/endPomodoro`, {
         obj,
       });
+
+
       return response.data.message === 'token expired' ? 'token expired' : obj;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error('Error adding new task:', error);
+      return rejectWithValue(error.message);
     }
   }
 );

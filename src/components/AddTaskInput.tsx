@@ -40,6 +40,7 @@ const AddTaskInput = ({
     };
     if (fieldValues.text.trim() === '') {
       alert('Task can not be empty');
+      return
     } else {
       if (!taskId) {
         // @ts-ignore
@@ -50,12 +51,15 @@ const AddTaskInput = ({
             // @ts-ignore
             dispatch(addNewTask(fieldValues) as any);
           } catch (error: any) {
-            if (error && error.response.status === 403)
+            if (error && error.response.status === 403) {
               alert('unauthenticated : Token expired');
+              return
+            }
           }
         } else {
           if (response?.error) {
             alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+            return
           }
         }
 
@@ -73,12 +77,15 @@ const AddTaskInput = ({
             // @ts-ignore
             dispatch(updateTask(obj) as any);
           } catch (error: any) {
-            if (error && error.response.status === 403)
+            if (error && error.response.status === 403) {
               alert('unauthenticated : Token expired');
+              return
+            }
           }
         } else {
           if (response?.error) {
             alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+            return
           }
         }
         setEditingTaskId(null);
@@ -102,14 +109,16 @@ const AddTaskInput = ({
         // @ts-ignore
         dispatch(deleteTask(taskId) as any);
       } catch (error: any) {
-        if (error && error.response.status === 403)
+        if (error && error.response.status === 403) {
           alert('unauthenticated : Token expired');
+          return
+        }
       }
-    } else {
-      if (response?.error) {
-        alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
-      }
+    } else if (response?.error) {
+      alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+      return
     }
+
   };
   return (
     <AddInputWrapper>

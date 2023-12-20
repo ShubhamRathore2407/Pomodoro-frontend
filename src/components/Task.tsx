@@ -84,8 +84,10 @@ const Task = React.memo(
                 // @ts-ignore
                 dispatch(completeTask(obj));
               } catch (error: any) {
-                if (error && error.response.status === 403)
+                if (error && error.response.status === 403) {
                   alert('unauthenticated : Token expired');
+                  return
+                }
                 else console.log(error);
               }
               setTimerPause(true);
@@ -93,6 +95,7 @@ const Task = React.memo(
             } else {
               if (response?.error) {
                 alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+                return
               } else {
                 setTimerPause(true);
                 dispatch(taskListActions.setComplete(taskId));
@@ -113,12 +116,15 @@ const Task = React.memo(
               //@ts-ignore
               dispatch(dispatch(restartTask(obj)));
             } catch (error: any) {
-              if (error && error.response.status === 403)
+              if (error && error.response.status === 403) {
                 alert('unauthenticated : Token expired');
+                return
+              }
               else console.log(error);
             }
-          } else if(response?.error) {
-             alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+          } else if (response?.error) {
+            alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+            return
           }
           dispatch(taskListActions.setInComplete(taskId));
         }
