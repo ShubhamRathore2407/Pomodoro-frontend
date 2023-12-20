@@ -21,7 +21,6 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(
     localStorage.getItem('access_token') !== null
   );
-  const user_id = useSelector((state:any) => state.user.userId );
   const [openAccount, setOpenAccount] = useState<boolean>(false);
   const [dropClick, setDropClick] = useState<boolean>(false);
 
