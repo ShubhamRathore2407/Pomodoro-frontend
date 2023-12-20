@@ -24,7 +24,8 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const [openAccount, setOpenAccount] = useState<boolean>(false);
   const [dropClick, setDropClick] = useState<boolean>(false);
 
-  const image = useSelector((state: any) => state.user.image);
+  const user = useSelector((state: any) => state.user);
+  const { userId, image } = user
 
   const dropdownRef: any = useRef(null);
   const handleClickOutside = (event: any) => {
@@ -57,7 +58,6 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       }
     };
     if (localStorage.getItem('access_token') !== null) fetchUserDataFunction();
-    setLoggedIn(localStorage.getItem('access_token') !== null);
 
     document.addEventListener('click', handleClickOutside);
 
@@ -65,6 +65,10 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+  setLoggedIn(userId !== "")
+  }, [user])
 
   const handleLoginOut = () => {
     if (!loggedIn) {

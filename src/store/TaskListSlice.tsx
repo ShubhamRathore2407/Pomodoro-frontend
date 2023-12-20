@@ -329,6 +329,7 @@ const taskListSlice = createSlice({
       if (action.payload != null && action.payload !== 'token expired') {
         state.tasks = action.payload;
       }
+      return state;
     });
   },
 });
