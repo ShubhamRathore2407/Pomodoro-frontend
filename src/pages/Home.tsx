@@ -71,7 +71,7 @@ const Home: React.FC = () => {
         await generateAndSetNewTokens();
 
         //@ts-ignore
-        const response = await dispatch(deleteCompletedTasks(obj));
+        await dispatch(deleteCompletedTasks(user_id));
       } catch (error: any) {
         if (error && error.response.status === 403)
           alert('unauthenticated : Token expired');
