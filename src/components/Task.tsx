@@ -91,8 +91,12 @@ const Task = React.memo(
               setTimerPause(true);
               dispatch(taskListActions.setComplete(taskId));
             } else {
-              setTimerPause(true);
-              dispatch(taskListActions.setComplete(taskId));
+              if (response?.error) {
+                alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+              } else {
+                setTimerPause(true);
+                dispatch(taskListActions.setComplete(taskId));
+              }
             }
           }
         } else {
@@ -113,6 +117,8 @@ const Task = React.memo(
                 alert('unauthenticated : Token expired');
               else console.log(error);
             }
+          } else if(response?.error) {
+             alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
           }
           dispatch(taskListActions.setInComplete(taskId));
         }

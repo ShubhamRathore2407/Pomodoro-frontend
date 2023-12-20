@@ -50,6 +50,10 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
             alert('unauthenticated : Token expired');
           } else console.log(error);
         }
+      } else {
+        if (response?.error) {
+          alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+        }
       }
     };
     if (localStorage.getItem('access_token') !== null) fetchUserDataFunction();

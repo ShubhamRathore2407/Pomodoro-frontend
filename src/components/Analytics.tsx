@@ -8,6 +8,7 @@ import { RootState } from '../types';
 
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
 
 const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const dispatch = useDispatch();
@@ -20,6 +21,22 @@ const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       };
       //@ts-ignore
       const response = await dispatch(fetchAllTasks(obj) as any);
+
+      if (response.payload === "token expired") {
+        try {
+          await generateAndSetNewTokens();
+
+          //@ts-ignore
+          await dispatch(fetchAllTasks(obj) as any);
+        } catch (error: any) {
+          if (error && error.response.status === 403)
+            alert('unauthenticated : Token expired');
+        }
+      } else {
+        if (response?.error) {
+          alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+        }
+      }
     };
 
     fetchUserDataFunction();

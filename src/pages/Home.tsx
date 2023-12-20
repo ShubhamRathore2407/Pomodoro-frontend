@@ -77,6 +77,8 @@ const Home: React.FC = () => {
           alert('unauthenticated : Token expired');
         else console.log(error);
       }
+    } else if (response?.error) {
+      alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
     }
   };
 

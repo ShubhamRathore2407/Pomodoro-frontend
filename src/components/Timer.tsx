@@ -103,6 +103,8 @@ const Timer = ({
                     alert('unauthenticated : Token expired');
                   else console.log(error);
                 }
+              } else if (response?.error) {
+                alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
               }
             }, 100);
           } else if (
@@ -131,6 +133,8 @@ const Timer = ({
                     alert('unauthenticated : Token expired');
                   else console.log(error);
                 }
+              } else if (response?.error) {
+                alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
               }
             }, 100);
           }
@@ -276,6 +280,8 @@ const Timer = ({
                     alert('unauthenticated : Token expired');
                   else console.log(error);
                 }
+              } else if (response?.error) {
+                alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
               }
             }
             console.log('Pause : Pause the Task');
@@ -299,6 +305,8 @@ const Timer = ({
                   alert('unauthenticated : Token expired');
                 else console.log(error);
               }
+            } else if (response?.error) {
+              alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
             }
             dispatch(taskListActions.setInComplete(activeIndex));
           }
@@ -331,6 +339,8 @@ const Timer = ({
                   alert('unauthenticated : Token expired');
                 else console.log(error);
               }
+            } else if (response?.error) {
+              alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
             }
             currPomodoroId = response.payload.pomodoro;
 
@@ -376,6 +386,8 @@ const Timer = ({
                   alert('unauthenticated : Token expired');
                 else console.log(error);
               }
+            } else if (response?.error) {
+              alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
             }
           }
           setTimerPause(false);
@@ -407,6 +419,8 @@ const Timer = ({
                   alert('unauthenticated : Token expired');
                 else console.log(error);
               }
+            } else if (response?.error) {
+              alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
             }
           }
           console.log('Pause : Pause the Task');
@@ -432,6 +446,8 @@ const Timer = ({
             alert('unauthenticated : Token expired');
           else console.log(error);
         }
+      } else if (response?.error) {
+        alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
       }
     }
   };

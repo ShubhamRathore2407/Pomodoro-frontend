@@ -49,14 +49,18 @@ const AddTaskInput = ({
           try {
             //----------------------------------------------------change---------------------//
             // await generateAndSetNewTokens();
-              const reResponse = await axios.post('http://localhost:5000/api/auth/refreshToken');
-              localStorage.removeItem('access_token');
-              localStorage.setItem('access_token', reResponse.data.accessToken);
+            const reResponse = await axios.post('http://localhost:5000/api/auth/refreshToken');
+            localStorage.removeItem('access_token');
+            localStorage.setItem('access_token', reResponse.data.accessToken);
             // @ts-ignore
             dispatch(addNewTask(fieldValues) as any);
           } catch (error: any) {
             if (error && error.response.status === 403)
               alert('unauthenticated : Token expired');
+          }
+        } else {
+          if (response?.error) {
+            alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
           }
         }
 
@@ -76,6 +80,10 @@ const AddTaskInput = ({
           } catch (error: any) {
             if (error && error.response.status === 403)
               alert('unauthenticated : Token expired');
+          }
+        } else {
+          if (response?.error) {
+            alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
           }
         }
         setEditingTaskId(null);
@@ -101,6 +109,10 @@ const AddTaskInput = ({
       } catch (error: any) {
         if (error && error.response.status === 403)
           alert('unauthenticated : Token expired');
+      }
+    } else {
+      if (response?.error) {
+        alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
       }
     }
   };
