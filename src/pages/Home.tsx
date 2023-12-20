@@ -71,14 +71,17 @@ const Home: React.FC = () => {
         await generateAndSetNewTokens();
 
         //@ts-ignore
-        await dispatch(deleteCompletedTasks(user_id));
+        dispatch(deleteCompletedTasks(user_id));
       } catch (error: any) {
-        if (error && error.response.status === 403)
+        if (error && error.response.status === 403) {
           alert('unauthenticated : Token expired');
+          return
+        }
         else console.log(error);
       }
     } else if (response?.error) {
       alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+      return
     }
   };
 
