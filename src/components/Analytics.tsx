@@ -1,14 +1,14 @@
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllTasks } from '../store/TaskListSlice';
-import { RootState } from '../types';
-
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
+import { fetchAllTasks } from '../store/TaskListSlice';
+import { RootState } from '../types';
 
 const Analytics = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const dispatch = useDispatch();

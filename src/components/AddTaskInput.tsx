@@ -52,6 +52,8 @@ const AddTaskInput = ({
             dispatch(addNewTask(fieldValues) as any);
           } catch (error: any) {
             if (error && error.response.status === 403) {
+              //@ts-ignore
+              dispatch(logoutUser())
               alert('unauthenticated : Token expired');
               return
             }
@@ -78,6 +80,8 @@ const AddTaskInput = ({
             dispatch(updateTask(obj) as any);
           } catch (error: any) {
             if (error && error.response.status === 403) {
+              //@ts-ignore
+              dispatch(logoutUser())
               alert('unauthenticated : Token expired');
               return
             }
@@ -110,6 +114,8 @@ const AddTaskInput = ({
         dispatch(deleteTask(taskId) as any);
       } catch (error: any) {
         if (error && error.response.status === 403) {
+          //@ts-ignore
+          dispatch(logoutUser())
           alert('unauthenticated : Token expired');
           return
         }

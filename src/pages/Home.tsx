@@ -46,7 +46,7 @@ const Home: React.FC = () => {
   );
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const handleAddTask = () => {
+  const handleAddTask = (): any => {
     setAddingTask(true);
     setEditingTaskId(null);
     const div = bottomRef.current;

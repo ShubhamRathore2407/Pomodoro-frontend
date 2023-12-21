@@ -99,8 +99,13 @@ const Timer = ({
                   //@ts-ignore
                   dispatch(endPomodoro(obj));
                 } catch (error: any) {
-                  if (error && error.response.status === 403)
+                  if (error && error.response.status === 403) {
+                    //@ts-ignore
+                    dispatch(logoutUser())
+                    localStorage.removeItem("access_token")
                     alert('unauthenticated : Token expired');
+                    return
+                  }
                   else console.log(error);
                 }
               } else if (response?.error) {
@@ -129,8 +134,13 @@ const Timer = ({
                   //@ts-ignore
                   dispatch(updateBreakTime(obj));
                 } catch (error: any) {
-                  if (error && error.response.status === 403)
+                  if (error && error.response.status === 403) {
+                    //@ts-ignore
+                    dispatch(logoutUser())
+                    localStorage.removeItem("access_token")
                     alert('unauthenticated : Token expired');
+                    return
+                  }
                   else console.log(error);
                 }
               } else if (response?.error) {
@@ -277,6 +287,9 @@ const Timer = ({
                   dispatch(pauseTask(taskId));
                 } catch (error: any) {
                   if (error && error.response.status === 403) {
+                    //@ts-ignore
+                    dispatch(logoutUser())
+                    localStorage.removeItem("access_token")
                     alert('unauthenticated : Token expired');
                     return
                   }
@@ -305,6 +318,10 @@ const Timer = ({
                 dispatch(dispatch(restartTask(obj)));
               } catch (error: any) {
                 if (error && error.response.status === 403) {
+
+                  //@ts-ignore
+                  dispatch(logoutUser())
+                  localStorage.removeItem("access_token")
                   alert('unauthenticated : Token expired');
                   return
                 }
@@ -343,7 +360,12 @@ const Timer = ({
                 );
               } catch (error: any) {
                 if (error && error.response.status === 403) {
+
+                  //@ts-ignore
+                  dispatch(logoutUser())
+                  localStorage.removeItem("access_token")
                   alert('unauthenticated : Token expired');
+
                   return
                 }
                 else console.log(error);
@@ -393,7 +415,12 @@ const Timer = ({
                 );
               } catch (error: any) {
                 if (error && error.response.status === 403) {
+
+                  //@ts-ignore
+                  dispatch(logoutUser())
+                  localStorage.removeItem("access_token")
                   alert('unauthenticated : Token expired');
+
                   return
                 }
                 else console.log(error);
@@ -429,7 +456,12 @@ const Timer = ({
                 dispatch(pauseTask(obj));
               } catch (error: any) {
                 if (error && error.response.status === 403) {
+
+                  //@ts-ignore
+                  dispatch(logoutUser())
+                  localStorage.removeItem("access_token")
                   alert('unauthenticated : Token expired');
+
                   return
                 }
                 else console.log(error);
@@ -459,7 +491,12 @@ const Timer = ({
           dispatch(deletePomodoro(pomodoroId));
         } catch (error: any) {
           if (error && error.response.status === 403) {
+
+            //@ts-ignore
+            dispatch(logoutUser())
+            localStorage.removeItem("access_token")
             alert('unauthenticated : Token expired');
+
             return
           }
           else console.log(error);
@@ -601,9 +638,3 @@ const CountDown = styled.div`
 `;
 
 export default Timer;
-
-// what is project about
-// what were the earlier phases
-// if i can be a part of the team
-// when it is going to start
-// what should i study before

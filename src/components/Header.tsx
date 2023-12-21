@@ -13,7 +13,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import generateAndSetNewTokens from '../helper/generateAndSetNewTokens';
-// import Account from './Account';
+import Account from './Account';
 
 const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const navigate = useNavigate();
@@ -49,6 +49,8 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
         } catch (error: any) {
           if (error && error.response.status === 403) {
             {
+              //@ts-ignore
+              dispatch(logoutUser())
               localStorage.removeItem('access_token');
               alert('unauthenticated : Token expired');
               return
@@ -130,7 +132,11 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
               </DP>
               {dropClick && (
                 <DropdownWrapper>
-                  <DropItems onClick={() => setOpenAccount(!openAccount)}>
+                  <DropItems onClick={(e: any) => {
+                    e.stopPropagation();
+                    setOpenAccount(!openAccount)
+                    setDropClick(false)
+                  }}>
                     <PersonIcon
                       style={{
                         opacity: '0.8',
@@ -167,11 +173,11 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           )}
         </Buttons>
       </HeaderContent>
-      {/* {openAccount && (
+      {openAccount && (
         <AccountWrapper>
-          <Account />
+          <Account setOpenAccount={setOpenAccount} />
         </AccountWrapper>
-      )} */}
+      )}
     </HeaderWrapper>
   );
 };
@@ -291,7 +297,7 @@ const Text = styled.div`
   display: block;
   margin-left: 2px;
 `;
-// const AccountWrapper = styled.div`
-//   z-index: 1000;
-// `;
+const AccountWrapper = styled.div`
+  z-index: 1000;
+`;
 export default Header;

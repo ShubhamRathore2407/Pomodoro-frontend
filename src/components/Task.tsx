@@ -85,6 +85,9 @@ const Task = React.memo(
                 dispatch(completeTask(obj));
               } catch (error: any) {
                 if (error && error.response.status === 403) {
+                  //@ts-ignore
+                  dispatch(logoutUser())
+                  localStorage.removeItem("access_token")
                   alert('unauthenticated : Token expired');
                   return
                 }
@@ -117,6 +120,9 @@ const Task = React.memo(
               dispatch(dispatch(restartTask(obj)));
             } catch (error: any) {
               if (error && error.response.status === 403) {
+                //@ts-ignore
+                dispatch(logoutUser())
+                localStorage.removeItem("access_token")
                 alert('unauthenticated : Token expired');
                 return
               }

@@ -17,6 +17,7 @@ export const fetchUserData = createAsyncThunk('user/getProfile', async () => {
     },
     withCredentials: true,
   });
+
   return response.data.message === 'token expired'
     ? 'token expired'
     : response.data.userData;
@@ -26,6 +27,20 @@ export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
   const response = await axios.post(`auth/logout`);
   return response.data;
 });
+
+export const updateProfile = createAsyncThunk("user/updateProfile", async (obj: any, { rejectWithValue }) => {
+  try {
+    const response = await axios.put('auth/updateProfile', { obj })
+
+    return response.data.message === 'token expired'
+      ? 'token expired'
+      : response.data.userData;
+
+  } catch (error: any) {
+    console.error('Error adding new task:', error);
+    return rejectWithValue(error.message);
+  }
+})
 
 const userSlice = createSlice({
   name: 'userSlice',
