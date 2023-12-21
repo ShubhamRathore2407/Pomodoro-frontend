@@ -231,8 +231,6 @@ const taskListSlice = createSlice({
       }
     },
     removetaskId(state) {
-      console.log('here');
-
       state.activeTaskIndex = null;
       state.activeIndexStatus = '';
     },

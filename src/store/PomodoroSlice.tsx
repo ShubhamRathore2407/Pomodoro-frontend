@@ -4,14 +4,12 @@ import axios from '../helper/axiosConfig';
 const innitialPomodoroState = {
   pomodoroId: null,
 };
-// const baseURL = 'http://localhost:5000/api/pomodoro';
 
 export const createPomodoroSession = createAsyncThunk(
   'pomodoro/createPomodoroSession',
   async (obj: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`/pomodoro/createPomodoro`, obj);
-      console.log(response);
 
       return response.data.message === 'token expired'
         ? 'token expired'
