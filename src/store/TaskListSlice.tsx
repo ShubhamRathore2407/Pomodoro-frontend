@@ -9,8 +9,6 @@ const initialTaskListState: TaskListState = {
   activeIndexStatus: 'Pending',
 };
 
-// const baseURL = 'http://localhost:5000/api/tasks';
-
 export const fetchAllTasks = createAsyncThunk(
   'tasks/fetchAllTasks',
   async (obj: any, { rejectWithValue }) => {

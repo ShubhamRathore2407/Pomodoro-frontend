@@ -11,6 +11,7 @@ const Account = ({ setOpenAccount }: { setOpenAccount: (openAccount: boolean) =>
   const fileInputRef: any = useRef(null);
   const accountRef: any = useRef(null)
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState<boolean>(true)
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -51,6 +52,7 @@ const Account = ({ setOpenAccount }: { setOpenAccount: (openAccount: boolean) =>
           picture: response.payload.image
         })
       }
+      setLoading(false)
     };
     fetchUserDataFunction();
   }, [])
@@ -94,7 +96,14 @@ const Account = ({ setOpenAccount }: { setOpenAccount: (openAccount: boolean) =>
     //@ts-ignore
     await dispatch(updateProfile(obj))
     setOpenAccount(false)
+
+    if (loading) {
+      return null
+    }
   }
+  useEffect(() => {
+    console.log(loading);
+  }, [loading])
   return (
     <AccountWrapper>
       <AccountBox>
@@ -257,7 +266,6 @@ const Email = styled.input`
   border-bottom: 1px solid rgb(221, 221, 221);
   padding:5px;
 `;
-
 const EditIcon = styled.div`
   cursor: pointer;
   user-select: none;

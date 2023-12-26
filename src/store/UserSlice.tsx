@@ -7,8 +7,6 @@ const initialUserState = {
   image: '',
 };
 
-// const baseURL = 'http://localhost:5000/api/auth';
-
 export const fetchUserData = createAsyncThunk('user/getProfile', async () => {
   const access_token = localStorage.getItem('access_token');
   const response = await axios.get(`/auth/getProfile`, {
