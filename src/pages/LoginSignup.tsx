@@ -6,8 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 const LoginSignup = () => {
-  // const baseURL = 'https://pomo-backend.onrender.com/api';
-  const baseURL = 'http://localhost:5000/api';
+  const baseURL = 'https://pomo-backend.onrender.com/api';
+  // const baseURL = 'http://localhost:5000/api';
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
   const selectedIntervalColor = useSelector(
