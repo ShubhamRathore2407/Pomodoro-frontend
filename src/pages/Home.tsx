@@ -25,7 +25,6 @@ const Home: React.FC = () => {
     minutes: 25,
     seconds: 0,
   });
-  let filteredTaskList: any = []
 
   const dispatch = useDispatch();
   const user_id = useSelector((state: any) => state.user.userId);
@@ -38,10 +37,6 @@ const Home: React.FC = () => {
       dispatch(fetchAllTasks(obj) as any);
     }
   }, [user_id]);
-
-  useEffect(() => {
-    filterTasks()
-  }, [taskList])
 
   const selectedIntervalColor = useSelector(
     (state: RootState) => state.interval.interval.color
@@ -90,12 +85,9 @@ const Home: React.FC = () => {
     }
   };
 
-  const filterTasks = () => {
-
-    filteredTaskList = taskList.filter((task: any) => {
-      return task.deleted !== true;
-    });
-  }
+  const filteredTaskList = taskList.filter((task: any) => {
+    return task.deleted !== true;
+  });
 
   return (
     <Section $selectedIntervalColor={selectedIntervalColor}>

@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://pomo-backend.onrender.com/api',
-  // baseURL:"http://localhost:5000/api",
+  // baseURL: 'https://pomo-backend.onrender.com/api',
+  baseURL: 'http://localhost:5000/api',
   withCredentials: true,
 });
 
