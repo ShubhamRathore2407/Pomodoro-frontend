@@ -58,6 +58,9 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           } else console.log(error);
         }
       } else if (response?.error) {
+         //@ts-ignore
+        dispatch(logoutUser())
+        localStorage.removeItem('access_token');
         alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
         return
       }
