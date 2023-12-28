@@ -40,7 +40,7 @@ const LoginSignup = () => {
           });
           localStorage.setItem('access_token', response.data.accessToken);
           navigate('/');
-        } catch (error) {
+        } catch (error:any) {
           alert(error.response.data.error);
           console.log(error);
         }
@@ -53,7 +53,7 @@ const LoginSignup = () => {
           });
           localStorage.setItem('access_token', response.data.accessToken);
           navigate('/');
-        } catch (error) {
+        } catch (error:any) {
           alert(error.response.data.error);
           console.log(error);
         }
@@ -88,7 +88,7 @@ const LoginSignup = () => {
         });
         localStorage.setItem('access_token', response.data.accessToken);
         navigate('/');
-      } catch (error) {
+      } catch (error:any) {
         alert(error.response.data.error);
         console.log(error);
       }
