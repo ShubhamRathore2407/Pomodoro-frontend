@@ -53,6 +53,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
               dispatch(logoutUser())
               localStorage.removeItem('access_token');
               alert('unauthenticated : Token expired');
+              window.location.reload();
               return
             }
           } else console.log(error);
@@ -62,6 +63,7 @@ const Header = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
         dispatch(logoutUser())
         localStorage.removeItem('access_token');
         alert("Unauthorized Access: Your credentials are invalid or expired. Please log in again")
+        window.location.reload();
         return
       }
 
