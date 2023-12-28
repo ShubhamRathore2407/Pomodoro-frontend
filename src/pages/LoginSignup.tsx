@@ -41,6 +41,7 @@ const LoginSignup = () => {
           localStorage.setItem('access_token', response.data.accessToken);
           navigate('/');
         } catch (error) {
+          alert(error.response.data.error);
           console.log(error);
         }
       } else {
@@ -53,6 +54,7 @@ const LoginSignup = () => {
           localStorage.setItem('access_token', response.data.accessToken);
           navigate('/');
         } catch (error) {
+          alert(error.response.data.error);
           console.log(error);
         }
       }
@@ -87,6 +89,7 @@ const LoginSignup = () => {
         localStorage.setItem('access_token', response.data.accessToken);
         navigate('/');
       } catch (error) {
+        alert(error.response.data.error);
         console.log(error);
       }
     },
